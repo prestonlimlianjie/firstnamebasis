@@ -1,0 +1,9 @@
+{
+  "name": "digital-business-card",
+  "description": "Get rid of pesky business cards",
+  "memory": 128,
+  "timeout": 5,
+  "role": "arn:aws:iam::365136181569:role/digital-business-card_lambda_function",
+  "environment": {},
+  "runtime": "nodejs6.10"
+}

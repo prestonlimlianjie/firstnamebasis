@@ -1,0 +1,97 @@
+doctype html
+html
+  head
+    title= title
+    link(
+    	rel="stylesheet" 
+      href="css/bootstrap.css" 
+      crossorigin="anonymous"
+    )
+    script(
+      src="js/bootstrap.js" 
+    )
+  body
+    nav.navbar.navbar-toggleable-md.navbar-light.bg-primary
+      a.navbar-brand(
+        href="#"
+      ) Digital Business Card
+      ul.nav
+        li.nav-item
+          a.nav-link.active(
+            href="#"
+          ) Active1
+        li.nav-item
+          a.nav-link.active(
+            href="#"
+          ) Active2
+        li.nav-item
+          a.nav-link.active(
+            href="#"
+          ) Active3
+    div.container
+      .jumbotron
+        h1 Digital business cards
+        p.lead It's a thing! Fill up the form below and create your own digital business card today.
+        hr.my-4
+        p Click on the button below to see a sample digital business card
+        a.btn.btn-primary.btn-lg(
+          href="#" 
+          role="button"
+        ) Sample
+      form
+        h2 Header information
+        .card
+          .card-body
+            .form-group
+              label(for="name") Name
+              input.form-control#name(
+                type="name"
+                placeholder="Darth Vader"
+              )
+            .form-group
+              label(for="counter") Country
+              input.form-control#country(
+                type="country"
+                placeholder="Singapore"
+              )
+            .form-group
+              label(for="company") Company
+              input.form-control#company(
+                type="company"
+                placeholder="ACNE inc."
+              )
+            .form-group
+              label(for="designation") Designation
+              input.form-control#designation(
+                type="designation"
+                placeholder="Duck Hunter"
+              )
+            .form-group
+              label(for="selfDescription") Short self description
+              textarea.form-control#selfDescription(rows="3")
+        br
+        h2 Call-to-actions  
+        p This will be buttons that appear on your digital business card. Click on the "+" button to add more buttons to your digital business card.
+        .card
+          .card-body
+            .form-group
+              label(for="exampleFormControlInput1") Email address
+              input.form-control#exampleFormControlInput1(
+                type="email"
+                placeholder="name@example.com"
+              )
+            .form-group
+              label(for="exampleFormControlSelect1") Example select
+              select.form-control#exampleFormControlSelect1
+                option 1
+                option 2
+                option 3
+                option 4
+            .form-group
+              label(for="exampleFormControlTextarea1") Example textarea
+              textarea.form-control#exampleFormControlTextarea1(rows="3")
+          br
+          button.btn.btn-outline-primary.btn-sm#form-add-card( type="button" ) +
+
+
+

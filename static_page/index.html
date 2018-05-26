@@ -48,10 +48,10 @@
                     <input class="form-control" id="last_name" name="last_name" type="text" placeholder="Vader" required="true">
                   </div>
                   <div class="form-group">
-                    <label for="photo">Profile photo</label>
-                    <input class="form-control-file" id="photo" name="photo_path" type="file" accept="image/*" onchange="readURL(this)" required="true">
+                    <label for="profile_photo">Profile photo</label>
+                    <input class="form-control-file" id="profile_photo" name="profile_photo" type="file" accept="image/*" onchange="readProfileURL(this)" required="true">
                   </div>
-                  <img class="hidden" id="photo-display" src="#" alt="your image" onerror="this.style.display='none'">
+                  <img class="hidden" id="profile-photo-display" src="#" alt="your image" onerror="this.style.display='none'">
                   <div class="form-group">
                     <label for="counter">Country</label>
                     <input class="form-control" id="country" name="country" type="text" placeholder="Singapore" required="true">
@@ -59,6 +59,11 @@
                     <label for="company">Company</label>
                     <input class="form-control" id="company" name="company" type="text" placeholder="ACME inc." required="true">
                   </div>
+                  <div class="form-group">
+                    <label for="company_logo">Company logo</label>
+                    <input class="form-control-file" id="company_logo" name="company_logo" type="file" accept="image/*" onchange="readLogoURL(this)" required="true">
+                  </div>
+                  <img class="hidden" id="logo-photo-display" src="#" onerror="this.style.display='none'">
                   <div class="form-group">
                     <label for="role">Role</label>
                     <input class="form-control" id="role" name="role" type="text" placeholder="Senior duck hunter" required="true">

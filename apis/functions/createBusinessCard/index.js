@@ -19,7 +19,8 @@ AWS.config.update(config);
 console.log('starting function')
 
 exports.handle = (event, context, callback) => {
-	console.log('processing event: %j', event)
+	console.log('processing event')
+    console.log(event)
     
     // Generate UUIDs for eaach card and image group to prevent filename conflicts
     const cardId = toUrlString(randomBytes(16));
@@ -38,16 +39,19 @@ exports.handle = (event, context, callback) => {
 
     var json_object = JSON.parse(event.body)
     // TO-DO: Replace hardcoded handlebars params
-    var params = {'full_name': json_object.full_name,
+    var params = {'full_name': json_object.first_name + json_object.last_name,
                     'first_name': json_object.first_name,
                     'last_name': json_object.last_name, 
                     'role': json_object.role, 
                     'company': json_object.company,
-                    'email': json_object.email,
-                    'phone_number': json_object.phone_number,
-                    'website': json_object.website,
-                    'address': json_object.address,
+                    'email': json_object.actions.email.value,
+                    'phone_number': json_object.actions.phone_number.value,
+                    'website': json_object.actions.website.value,
+                    'address': json_object.actions.address.value,
                     };
+
+    console.log("printing out params...")
+    console.log(params)
 
     const bucketURL = 'http://digital.business.card.s3-website-ap-southeast-1.amazonaws.com/';
     var readFileName = './assets/index.html';
@@ -77,15 +81,20 @@ exports.handle = (event, context, callback) => {
         errorResponse(err.message, params.awsRequestId, callback);
     });
 
+    var responseBody = {
+        path: bucketURL + mainHTMLName,
+    };
+
     const response = {
         statusCode: 200,
         headers: {
             "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
             "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS 
         },
-        body: bucketURL + mainHTMLName
+        body: JSON.stringify(responseBody)
     };
 
+    console.log("response: " + JSON.stringify(response))
     callback(null, response)
 };
 

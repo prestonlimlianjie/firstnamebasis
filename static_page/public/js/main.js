@@ -49,6 +49,7 @@ $(document).ready(function() {
     
 
     var formPostObject = Promise.all([getFormData, getImageBlob]).then((values) => {
+      console.log(values[0])
       var postObject = values[0]
       postObject.photo = values[1]
       return Promise.resolve(postObject)
@@ -56,51 +57,26 @@ $(document).ready(function() {
 
     var postToEndpoint = formPostObject.then(function(postObject) {
       // return sendPostRequest(postObject)
-      var endpoint = 'https://30nl04a0ki.execute-api.ap-southeast-1.amazonaws.com/v1/create'; 
+      var endpoint = 'https://0sm4cknhsl.execute-api.ap-southeast-1.amazonaws.com/prod/create'; 
 
-      $.ajax({
+      // POST request to endpoint
+      return axios({
+        method:'post',
         url: endpoint,
-        type: "POST",
-        data: postObject,
-        success: function (result) {
-            switch (result) {
-                case true:
-                    console.log(result);
-                    break;
-                default:
-                    console.log(result);
-            }
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-          alert(xhr.status);
-        }
+        responseType:'json',
+        data: JSON.stringify(postObject),
       });
 
-      // $.ajax({
-      //   type: 'POST',
-      //   url: endpoint,
-      //   data: postObject,
-      //   dataType: 'json',
-      //   success: function(data) {
-      //     console.log('success', data) 
-      //   },
-      //   error: function(xhr) {
-      //     console.log('error', xhr);
-      //   }
-      // });
     })
 
-    // postToEndpoint
-    // .done(function(data) {
-    //   console.log('common callback', data);
-    // })
-    // .fail(function(xhr) {
-    //   console.log('error common back', xhr);
-    // });
+    postToEndpoint.then(function(response) {
+      console.log(response)
+      // Redirect to create digital business card
+      window.location.href = response.data.path;
+    }).catch(function(error){
+      console.log(error)
+    })
 
-    // $.post($(this).attr("action"), formData, function(data) {
-    //   alert(data);
-    // });
   });
 
 

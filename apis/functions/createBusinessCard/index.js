@@ -77,7 +77,16 @@ exports.handle = (event, context, callback) => {
         errorResponse(err.message, params.awsRequestId, callback);
     });
 
-    callback(null, {"statusCode": 200, "body": bucketURL + mainHTMLName })
+    const response = {
+        statusCode: 200,
+        headers: {
+            "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
+            "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS 
+        },
+        body: bucketURL + mainHTMLName
+    };
+
+    callback(null, response)
 };
 
 function uploadToS3(fileName, body, isHTML) {

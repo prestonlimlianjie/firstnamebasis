@@ -1,0 +1,32 @@
+body {
+	font-family: 'Open Sans Condensed', sans-serif;
+}
+
+nav {
+	background: #485563;  /* fallback for old browsers */
+	background: -webkit-linear-gradient(to right, #29323c, #485563);  /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to right, #29323c, #485563); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	border-bottom: 1px solid grey;
+}
+
+.intro-container {
+	background: #485563;  /* fallback for old browsers */
+	background: -webkit-linear-gradient(to right, #29323c, #485563);  /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to right, #29323c, #485563); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	padding-top: 100px;
+	padding-bottom: 100px;
+	border-bottom: 1px solid grey;
+}
+
+.form-container {
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
+
+h1, h2, h3, h4 {
+	color: #485563;
+}
+
+.btn {
+	background-color: transparent;
+}

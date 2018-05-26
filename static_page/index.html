@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Digital Business Card</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300" rel="stylesheet">
+    <link href="public/css/style.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script src="public/js/main.js"></script>
+    <script src="public/js/jquery.serializejson.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-toggleable-md">
+      <a class="navbar-brand text-white" href="#">...isMyName</a>
+    </nav>
+    <div class="container-fluid intro-container">
+        <div class="container">
+        <h1 class="text-white">Digital business cards</h1>
+        <p class="text-white">It's a thing! Fill up the form below and create your own digital business card today</p>
+        <div>
+          <a class="btn btn-light btn-lg" href="#signupForm" role="button">
+            <div class="content text-white">Signup here</div>
+          </a>
+          <a class="btn btn-secondary btn-lg" href="http://digital.business.card.s3-website-ap-southeast-1.amazonaws.com/1ZXRTQnifOVMvObdZPu8Fw/" role="button">
+            <div class="content text-white">Sample</div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <!-- <form id="createForm" action="https://30nl04a0ki.execute-api.ap-southeast-1.amazonaws.com/v1/test" method="post" target="_blank" enctype="multipart/form-data"> -->
+      <div class="row form-container"> 
+        <div class="col">
+          <form id="signupForm">  
+            <h2>Signup Form</h2>
+            <section id="headerInfo">
+              <div class="card">
+                <div class="card-body">
+                  <h3>Header information</h2>
+                  <p class="lead">This is information that will be displayed at the top of your digital business card. Use it to add some pazass to your profile :)</p>
+                  <div class="form-group">
+                    <label for="name">Name</label>
+                    <input class="form-control" id="name" name="name" type="text" placeholder="Darth Vader" required="true">
+                  </div>
+                  <div class="form-group">
+                    <label for="photo">Profile photo</label>
+                    <input class="form-control-file" id="photo" name="photo_path" type="file" accept="image/*" onchange="readURL(this)" required="true">
+                  </div>
+                  <img class="hidden" id="photo-display" src="#" alt="your image" onerror="this.style.display='none'">
+                  <div class="form-group">
+                    <label for="counter">Country</label>
+                    <input class="form-control" id="country" name="country" type="text" placeholder="Singapore" required="true">
+                  </div><div class="form-group">
+                    <label for="company">Company</label>
+                    <input class="form-control" id="company" name="company" type="text" placeholder="ACNE inc." required="true">
+                  </div>
+                  <div class="form-group">
+                    <label for="designation">Designation</label>
+                    <input class="form-control" id="designation" name="designation" type="text" placeholder="Duck Hunter" required="true">
+                  </div>
+                  <div class="form-group">
+                    <label for="selfDescription">Short self description</label>
+                    <textarea class="form-control" id="selfDescription" name="description" rows="3"></textarea>
+                  </div>
+                </div>
+              </div>
+            </section> 
+            <br>
+            <section id="callToAction">
+              <h3>Call-to-actions</h2>
+              <p class="lead">This will be buttons that appear on your digital business card. Click on the "+" button to add more buttons to your digital business card.</p>
+              <div id="callToActionContainer">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label for="email">Email address</label>
+                      <input class="form-control" id="email" name="actions[email][value]" type="email" placeholder="name@example.com" required="true">
+                    </div>
+                    <div class="form-group">
+                      <label for="phone">Contact number</label>
+                      <input class="form-control" id="phone" name="actions[phone][value]" type="phone" placeholder="+65 9123 4567" required="true">
+                    </div>
+                    <div class="form-group">
+                      <label for="website">Website</label>
+                      <input class="form-control" id="website" name="actions[website][value]" type="website" placeholder="https://google.com" required="true">
+                    </div>
+                    <div class="form-group">
+                      <label for="address">Address</label>
+                      <input class="form-control" id="address" name="actions[address][value]" type="address" placeholder="1 Oxley Road" required="true">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <!-- <button class="btn btn-outline-primary btn-sm" id="form-add-card" type="button">+</button> -->
+            <br>
+            <button class="btn btn-secondary text-primary" id="form-submit" type="submit">Submit</button>
+          </form> 
+        </div>
+      </div>
+    </div>
+  </body>

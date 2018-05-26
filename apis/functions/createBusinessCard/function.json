@@ -2,7 +2,7 @@
   "description": "API endpoint to generate business card",
   "runtime": "nodejs",
   "memory": 128,
-  "timeout": 5,
+  "timeout": 30,
   "build": "npm install",
   "role": "arn:aws:iam::365136181569:role/GenerateBusinessCard"
 }

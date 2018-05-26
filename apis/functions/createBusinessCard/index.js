@@ -25,39 +25,31 @@ exports.handle = (event, context, callback) => {
     // Generate UUIDs for eaach card and image group to prevent filename conflicts
     const cardId = toUrlString(randomBytes(16));
     const imageId = toUrlString(randomBytes(16));
-    
-// {'full_name': 'Preston Lim',
-//                     'first_name': 'Preston',
-//                     'last_name': 'Lim', 
-//                     'role': 'Associate Software Engineer', 
-//                     'company': 'Data Science Division, GovTech',
-//                     'email': 'preston@data.gov.sg',
-//                     'phone_number': '+65 9123 4567',
-//                     'website': 'https://tech.gov.sg',
-//                     'address': '1 Fusionopolis, Sandcrawler, #09-01, 138577'
-//                     };
 
     var json_object = JSON.parse(event.body)
     // TO-DO: Replace hardcoded handlebars params
-    var params = {'full_name': json_object.first_name + json_object.last_name,
-                    'first_name': json_object.first_name,
-                    'last_name': json_object.last_name, 
-                    'role': json_object.role, 
-                    'company': json_object.company,
-                    'email': json_object.actions.email.value,
-                    'phone_number': json_object.actions.phone_number.value,
-                    'website': json_object.actions.website.value,
-                    'address': json_object.actions.address.value,
-                    };
+    var params = {
+        'full_name': json_object.first_name + " " + json_object.last_name,
+        'first_name': json_object.first_name,
+        'last_name': json_object.last_name, 
+        'role': json_object.role, 
+        'company': json_object.company,
+        'email': json_object.actions.email.value,
+        'phone_number': json_object.actions.phone_number.value,
+        'website': json_object.actions.website.value,
+        'address': json_object.actions.address.value,
+        'profile_photo': json_object.profile_photo,
+        'company_logo': json_object.company_logo,
+    };
 
     console.log("printing out params...")
     console.log(params)
 
     const bucketURL = 'http://digital.business.card.s3-website-ap-southeast-1.amazonaws.com/';
     var readFileName = './assets/index.html';
-    var mainHTMLName = 'user/' + cardId + '/index.html';
-    var qrFileName = 'user/' + cardId + '/qr.png';
-    var vcfName = 'user/' + cardId + '/user.vcf';
+    var mainHTMLName = 'users/' + cardId + '/index.html';
+    var qrFileName = 'users/' + cardId + '/qr.png';
+    var vcfName = 'users/' + cardId + '/user.vcf';
 
     // var writeFileName = '/tmp/index.html'; // Note: You can only write to the '/tmp' directory in AWS Lambda
 
@@ -80,6 +72,10 @@ exports.handle = (event, context, callback) => {
         console.error(err);
         errorResponse(err.message, params.awsRequestId, callback);
     });
+
+    // Step 5: Upload profile and company photo to bucket
+    uploadImageToS3(cardId, 'profile.png', params.profile_photo);
+    uploadImageToS3(cardId, 'logo.png', params.company_logo);
 
     var responseBody = {
         path: bucketURL + mainHTMLName,
@@ -108,6 +104,26 @@ function uploadToS3(fileName, body, isHTML) {
     s3.upload(params, function(err, data) {
         console.log(err, data);
         console.log('File successfully uploaded to: ' + data.Location);
+    });
+}
+
+function uploadImageToS3(cardId, fileName, imageBinary) {
+    console.log("uploading images to s3")
+    buf = new Buffer(imageBinary.replace(/^data:image\/\w+;base64,/, ""),'base64')
+    var params = {
+        Bucket: bucket,
+        Key: 'users/' + cardId + '/' + fileName, 
+        Body: buf,
+        ContentEncoding: 'base64',
+        ContentType: 'image/png'
+    };
+    s3.putObject(params, function(err, data){
+        if (err) { 
+            console.log(err);
+            console.log('Error uploading data: ', data); 
+        } else {
+            console.log('succesfully uploaded the image!');
+        }
     });
 }
 

@@ -107,11 +107,10 @@ exports.handle = (event, context, callback) => {
 
     // Step 4: Store the user input and file information into the dynamoDB table
     // then return the CardId to the user/QR code IP address
+
     Promise.all([promise1, promise2, promise3b])
+    .then(recordCardInfo(cardId, params))
     .then(() => {
-        return recordCardInfo(cardId, params)
-    })
-    .then((data) => {
         console.log('Record successfully added into dynamodb');
         console.log("response: " + JSON.stringify(response))
         callback(null, response);
@@ -182,17 +181,19 @@ function generateVCard(params, vcfName){
         console.log(vCard.getFormattedString());
 
         uploadToS3(vcfName, vCard.getFormattedString(), false);
-    })
+    });
 }
 
 // Use handlebars to render the HTML from template; returns a Promise
 function renderTemplate(params, readFileName, writeFileName, bucket) {
-    return fs.readFileAsync(readFileName)
-    .then((data) => {
-        var source = data.toString('utf8'); // To convert the buffer stream into a string
-        var template = handlebars.compile(source); // Handlebars at work
-        var renderedTemplate = template(params);
-        uploadToS3(writeFileName, renderedTemplate, true);
+    return new Promise((resolve, reject) => {
+        fs.readFileAsync(readFileName)
+        .then((data) => {
+            var source = data.toString('utf8'); // To convert the buffer stream into a string
+            var template = handlebars.compile(source); // Handlebars at work
+            var renderedTemplate = template(params);
+            uploadToS3(writeFileName, renderedTemplate, true);
+        });
     });
 }
 
@@ -200,7 +201,7 @@ function generateQRCode(qrFileName, cardURL) {
     return new Promise((resolve, reject) => {
         var qr_stream = qr.image(cardURL, { ec_level: 'H' });
         uploadToS3(qrFileName, qr_stream, true);  
-    })  
+    });
 }
 
 // Put the user input into dynamoDB

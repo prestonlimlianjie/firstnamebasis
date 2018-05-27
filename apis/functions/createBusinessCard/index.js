@@ -25,7 +25,8 @@ console.log('starting function')
 // Lambda function proper
 // ======================
 exports.handle = (event, context, callback) => {
-	console.log('processing event: %j', event)
+	console.log('processing event')
+    console.log(event)
     
     // Test input for API Gateway
     // ==========================
@@ -42,6 +43,8 @@ exports.handle = (event, context, callback) => {
     //  'address_stateProvince': 'Singapore',
     //  'address_postalCode': '138577',
     //  'address_countryRegion': 'Singapore'
+    //  'profile_photo': [blob],
+    //  'company_logo': [blob],
     // }
     
     // Generate UUIDs for eaach card and image group to prevent filename conflicts
@@ -61,13 +64,18 @@ exports.handle = (event, context, callback) => {
                     'address_postalCode': json_object.address_postalCode,
                     'address_countryRegion': json_object.address_countryRegion,
                     'address': json_object.address_street + ", " + json_object.address_city + ", " + json_object.address_stateProvince + ", " + json_object.address_postalCode + ", " + json_object.address_countryRegion
+                    'profile_photo': json_object.profile_photo,
+                    'company_logo': json_object.company_logo
                     };
+
+    console.log("printing out params...")
+    console.log(params)
 
     const bucketURL = 'http://digital.business.card.s3-website-ap-southeast-1.amazonaws.com/';
     var readFileName = './assets/index.html';
-    var mainHTMLName = 'user/' + cardId + '/index.html';
-    var qrFileName = 'user/' + cardId + '/qr.png';
-    var vcfName = 'user/' + cardId + '/user.vcf';
+    var mainHTMLName = 'users/' + cardId + '/index.html';
+    var qrFileName = 'users/' + cardId + '/qr.png';
+    var vcfName = 'users/' + cardId + '/user.vcf';
 
     // Step 1: Generate the static HTML website using the user input
     renderTemplate(params, readFileName, mainHTMLName, bucket)
@@ -88,7 +96,25 @@ exports.handle = (event, context, callback) => {
         errorResponse(err.message, params.awsRequestId, callback);
     });
 
-    callback(null, {"statusCode": 200, "body": bucketURL + mainHTMLName })
+    // Step 5: Upload profile and company photo to bucket
+    uploadImageToS3(cardId, 'profile.png', params.profile_photo);
+    uploadImageToS3(cardId, 'logo.png', params.company_logo);
+
+    var responseBody = {
+        path: bucketURL + mainHTMLName,
+    };
+
+    const response = {
+        statusCode: 200,
+        headers: {
+            "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
+            "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS 
+        },
+        body: JSON.stringify(responseBody)
+    };
+
+    console.log("response: " + JSON.stringify(response))
+    callback(null, response)
 };
 
 function uploadToS3(fileName, body, isHTML) {
@@ -101,6 +127,26 @@ function uploadToS3(fileName, body, isHTML) {
     s3.upload(params, function(err, data) {
         console.log(err, data);
         console.log('File successfully uploaded to: ' + data.Location);
+    });
+}
+
+function uploadImageToS3(cardId, fileName, imageBinary) {
+    console.log("uploading images to s3")
+    buf = new Buffer(imageBinary.replace(/^data:image\/\w+;base64,/, ""),'base64')
+    var params = {
+        Bucket: bucket,
+        Key: 'users/' + cardId + '/' + fileName, 
+        Body: buf,
+        ContentEncoding: 'base64',
+        ContentType: 'image/png'
+    };
+    s3.putObject(params, function(err, data){
+        if (err) { 
+            console.log(err);
+            console.log('Error uploading data: ', data); 
+        } else {
+            console.log('succesfully uploaded the image!');
+        }
     });
 }
 

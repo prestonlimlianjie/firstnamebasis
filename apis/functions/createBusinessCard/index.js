@@ -5,9 +5,12 @@ const ddb = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3();
 var Promise = require("bluebird");
 var fs = Promise.promisifyAll(require("fs"));
-var vcf = require("vcf");
 var qr = require('qr-image');
+var vCard = require('vcards-js');
 
+
+// Constants
+// =========
 const bucket = 'digital.business.card'
 const config = new AWS.Config({
     accessKeyId: process.env.ACCESS_KEY_ID,
@@ -18,26 +21,32 @@ AWS.config.update(config);
 
 console.log('starting function')
 
+
+// Lambda function proper
+// ======================
 exports.handle = (event, context, callback) => {
 	console.log('processing event: %j', event)
     
+    // Test input for API Gateway
+    // ==========================
+    // {'full_name': 'Preston Lim',
+    //  'first_name': 'Preston',
+    //  'last_name': 'Lim', 
+    //  'role': 'Associate Software Engineer', 
+    //  'company': 'Data Science Division, GovTech',
+    //  'email': 'preston@data.gov.sg',
+    //  'phone_number': '+65 9123 4567',
+    //  'website': 'https://tech.gov.sg',
+    //  'address_street': '1 Fusionopolis, Sandcrawler, #09-01',
+    //  'address_city': 'Singapore',
+    //  'address_stateProvince': 'Singapore',
+    //  'address_postalCode': '138577',
+    //  'address_countryRegion': 'Singapore'
+    // }
+    
     // Generate UUIDs for eaach card and image group to prevent filename conflicts
     const cardId = toUrlString(randomBytes(16));
-    const imageId = toUrlString(randomBytes(16));
-    
-// {'full_name': 'Preston Lim',
-//                     'first_name': 'Preston',
-//                     'last_name': 'Lim', 
-//                     'role': 'Associate Software Engineer', 
-//                     'company': 'Data Science Division, GovTech',
-//                     'email': 'preston@data.gov.sg',
-//                     'phone_number': '+65 9123 4567',
-//                     'website': 'https://tech.gov.sg',
-//                     'address': '1 Fusionopolis, Sandcrawler, #09-01, 138577'
-//                     };
-
     var json_object = JSON.parse(event.body)
-    // TO-DO: Replace hardcoded handlebars params
     var params = {'full_name': json_object.full_name,
                     'first_name': json_object.first_name,
                     'last_name': json_object.last_name, 
@@ -46,7 +55,12 @@ exports.handle = (event, context, callback) => {
                     'email': json_object.email,
                     'phone_number': json_object.phone_number,
                     'website': json_object.website,
-                    'address': json_object.address,
+                    'address_street': json_object.address_street,
+                    'address_city': json_object.address_city,
+                    'address_stateProvince': json_object.address_stateProvince,
+                    'address_postalCode': json_object.address_postalCode,
+                    'address_countryRegion': json_object.address_countryRegion,
+                    'address': json_object.address_street + ", " + json_object.address_city + ", " + json_object.address_stateProvince + ", " + json_object.address_postalCode + ", " + json_object.address_countryRegion
                     };
 
     const bucketURL = 'http://digital.business.card.s3-website-ap-southeast-1.amazonaws.com/';
@@ -55,10 +69,7 @@ exports.handle = (event, context, callback) => {
     var qrFileName = 'user/' + cardId + '/qr.png';
     var vcfName = 'user/' + cardId + '/user.vcf';
 
-    // var writeFileName = '/tmp/index.html'; // Note: You can only write to the '/tmp' directory in AWS Lambda
-
     // Step 1: Generate the static HTML website using the user input
-    // var promiseStep1 = renderTemplate(params, readFileName, writeFileName, bucket, cardId)
     renderTemplate(params, readFileName, mainHTMLName, bucket)
     
     // Step 2: Generate the VCF using the user input
@@ -96,27 +107,26 @@ function uploadToS3(fileName, body, isHTML) {
 // Generate the VCF using 'vcf'
 function generateVCard(params, vcfName){
     return new Promise((resolve, reject) => {
-        var newCard = new vcf();
+        vCard = vCard();
 
-        var jcard = [ "vcard",
-          [
-            [ "version", {}, "text", "4.0" ],
-            [ "n", {}, "text", [ params['last_name'], params['first_name'], "", "", "" ] ],
-            [ "fn", {}, "text", params['full_name'] ],
-            [ "org", {}, "text", params['company'] ],
-            [ "title", {}, "text", params['role'] ],
-            [ "tel", { "type": [ "work", "voice" ], "value": "uri" }, "uri", "tel:" + params['phone_number'] ],
-            [
-              "adr", { "type": "work", "label": params['address'] }
-            ],
-            [ "email", {}, "text", params['email'] ]
-          ]
-        ];
+        //set properties
+        vCard.firstName = params['first_name'];
+        vCard.lastName = params['last_name'];
+        vCard.organization = params['company'];
+        // vCard.photo.attachFromUrl('https://avatars2.githubusercontent.com/u/5659221?v=3&s=460', 'JPEG');
+        vCard.workPhone = params['phone_number'];
+        vCard.title = params['role'];
+        vCard.workUrl = params['website'];
+        vCard.workEmail = params['email'];
 
-        var testCard = new vcf.fromJSON(jcard);
-        console.log(testCard.toString('4.0'));
-        uploadToS3(vcfName, testCard.toString('4.0'), false);
-        // return fs.writeFileAsync(vcfName, newCard.toString('4.0'));
+        vCard.workAddress.label = 'Work Address';
+        vCard.workAddress.street = params['address_street']
+        vCard.workAddress.city = params['address_city'];
+        vCard.workAddress.stateProvince = params['address_stateProvince'];
+        vCard.workAddress.postalCode = params['address_postalCode'];
+        vCard.workAddress.countryRegion = params['address_countryRegion'];
+
+        uploadToS3(vcfName, vCard.getFormattedString(), false);
     })
 }
 

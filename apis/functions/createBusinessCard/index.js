@@ -26,7 +26,7 @@ console.log('starting function')
 // Lambda function proper
 // ======================
 exports.handle = (event, context, callback) => {
-	console.log('processing event')
+    console.log('processing event')
     console.log(event)
     
     // Test input for API Gateway
@@ -79,29 +79,6 @@ exports.handle = (event, context, callback) => {
     var qrFileName = 'users/' + cardId + '/qr.png';
     var vcfName = 'users/' + cardId + '/user.vcf';
 
-    // Step 1: Generate the static HTML website using the user input
-    renderTemplate(params, readFileName, mainHTMLName, bucket)
-    
-    // Step 2: Generate the VCF using the user input
-    generateVCard(params, vcfName, bucket);
-
-    // Step 3: Generate the QR code file
-    generateQRCode(qrFileName, bucketURL + mainHTMLName);
-
-    // Step 4: Store the user input and file information into the dynamoDB table
-    // then return the CardId to the user/QR code IP address
-    recordCardInfo(cardId, params).then((data) => {
-        console.log('Record successfully added into dynamodb: ' + data.CardId);
-        callback(null);
-    }).catch((err) => {
-        console.error(err);
-        errorResponse(err.message, params.awsRequestId, callback);
-    });
-
-    // Step 5: Upload profile and company photo to bucket
-    uploadImageToS3(cardId, 'profile.png', params.profile_photo);
-    uploadImageToS3(cardId, 'logo.png', params.company_logo);
-
     var responseBody = {
         path: bucketURL + mainHTMLName,
     };
@@ -115,8 +92,34 @@ exports.handle = (event, context, callback) => {
         body: JSON.stringify(responseBody)
     };
 
-    console.log("response: " + JSON.stringify(response))
-    callback(null, response)
+    // Step 1: Generate the static HTML website using the user input
+    var promise1 = renderTemplate(params, readFileName, mainHTMLName, bucket)
+    
+    // Step 2: Generate the VCF using the user input
+    var promise2 = generateVCard(params, vcfName, bucket);
+
+    // Step 3a: Upload profile and company photo to bucket
+    // var promise3ai = uploadImageToS3(cardId, 'profile.png', params.profile_photo);
+    // var promise3aii = uploadImageToS3(cardId, 'logo.png', params.company_logo);
+
+    // Step 3b: Generate the QR code file
+    var promise3b = generateQRCode(qrFileName, bucketURL + mainHTMLName);
+
+    // Step 4: Store the user input and file information into the dynamoDB table
+    // then return the CardId to the user/QR code IP address
+    Promise.all([promise1, promise2, promise3b])
+    .then(() => {
+        return recordCardInfo(cardId, params)
+    })
+    .then((data) => {
+        console.log('Record successfully added into dynamodb');
+        console.log("response: " + JSON.stringify(response))
+        callback(null, response);
+    }).catch((err) => {
+        console.log('DynamoDB error');
+        console.error(err);
+        errorResponse(err.message, params.awsRequestId, callback);
+    });
 };
 
 function uploadToS3(fileName, body, isHTML) {
@@ -133,23 +136,25 @@ function uploadToS3(fileName, body, isHTML) {
 }
 
 function uploadImageToS3(cardId, fileName, imageBinary) {
-    console.log("uploading images to s3")
-    buf = new Buffer(imageBinary.replace(/^data:image\/\w+;base64,/, ""),'base64')
-    var params = {
-        Bucket: bucket,
-        Key: 'users/' + cardId + '/' + fileName, 
-        Body: buf,
-        ContentEncoding: 'base64',
-        ContentType: 'image/png'
-    };
-    s3.putObject(params, function(err, data){
-        if (err) { 
-            console.log(err);
-            console.log('Error uploading data: ', data); 
-        } else {
-            console.log('succesfully uploaded the image!');
-        }
-    });
+    return new Promise((resolve, reject) => {
+        console.log("uploading images to s3")
+        buf = new Buffer(imageBinary.replace(/^data:image\/\w+;base64,/, ""),'base64')
+        var params = {
+            Bucket: bucket,
+            Key: 'users/' + cardId + '/' + fileName, 
+            Body: buf,
+            ContentEncoding: 'base64',
+            ContentType: 'image/png'
+        };
+        s3.putObject(params, function(err, data){
+            if (err) { 
+                console.log(err);
+                console.log('Error uploading data: ', data); 
+            } else {
+                console.log('succesfully uploaded the image!');
+            }
+        });
+    })
 }
 
 // Generate the VCF using 'vcf'
@@ -174,29 +179,33 @@ function generateVCard(params, vcfName){
         vCard.workAddress.postalCode = params['address_postalCode'];
         vCard.workAddress.countryRegion = params['address_countryRegion'];
 
+        console.log(vCard.getFormattedString());
+
         uploadToS3(vcfName, vCard.getFormattedString(), false);
     })
 }
 
 // Use handlebars to render the HTML from template; returns a Promise
 function renderTemplate(params, readFileName, writeFileName, bucket) {
-    fs.readFileAsync(readFileName)
+    return fs.readFileAsync(readFileName)
     .then((data) => {
         var source = data.toString('utf8'); // To convert the buffer stream into a string
         var template = handlebars.compile(source); // Handlebars at work
         var renderedTemplate = template(params);
         uploadToS3(writeFileName, renderedTemplate, true);
-        // return fs.writeFileAsync(writeFileName, template(params));
     });
 }
 
 function generateQRCode(qrFileName, cardURL) {
-    var qr_stream = qr.image(cardURL, { ec_level: 'H' });
-    uploadToS3(qrFileName, qr_stream, true);    
+    return new Promise((resolve, reject) => {
+        var qr_stream = qr.image(cardURL, { ec_level: 'H' });
+        uploadToS3(qrFileName, qr_stream, true);  
+    })  
 }
 
 // Put the user input into dynamoDB
 function recordCardInfo(cardId, params) {
+    console.log('Begin recording card info into dynamoDB')
     return ddb.put({
         TableName: 'DigitalBusinessCards',
         Item: {

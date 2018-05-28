@@ -7,6 +7,7 @@ var Promise = require("bluebird");
 var fs = Promise.promisifyAll(require("fs"));
 var qr = require('qr-image');
 var vCard = require('vcards-js');
+const uuid = require('uuid/v4');
 
 
 // Constants
@@ -48,22 +49,23 @@ exports.handle = (event, context, callback) => {
     // }
     
     // Generate UUIDs for eaach card and image group to prevent filename conflicts
-    const cardId = toUrlString(randomBytes(16));
+    const cardId = uuid();
+    console.log(cardId);
     var json_object = JSON.parse(event.body)
-    var params = {'full_name': json_object.full_name,
+    var params = {'full_name': json_object.first_name + json_object.last_name,
                     'first_name': json_object.first_name,
                     'last_name': json_object.last_name, 
                     'role': json_object.role, 
                     'company': json_object.company,
-                    'email': json_object.email,
-                    'phone_number': json_object.phone_number,
-                    'website': json_object.website,
-                    'address_street': json_object.address_street,
-                    'address_city': json_object.address_city,
-                    'address_stateProvince': json_object.address_stateProvince,
-                    'address_postalCode': json_object.address_postalCode,
-                    'address_countryRegion': json_object.address_countryRegion,
-                    'address': json_object.address_street + ", " + json_object.address_city + ", " + json_object.address_stateProvince + ", " + json_object.address_postalCode + ", " + json_object.address_countryRegion
+                    'email': json_object.actions.email.value,
+                    'phone_number': json_object.actions.phone_number.value,
+                    'website': json_object.actions.website.value,
+                    'address_street': json_object.actions.address.address_street,
+                    'address_city': json_object.actions.address.address_city,
+                    'address_stateProvince': json_object.actions.address.address_stateProvince,
+                    'address_postalCode': json_object.actions.address.address_postalCode,
+                    'address_countryRegion': json_object.actions.address.address_countryRegion,
+                    'address': json_object.actions.address.address_street + ", " + json_object.actions.address.address_city + ", " + json_object.actions.address.address_stateProvince + ", " + json_object.actions.address.address_postalCode + ", " + json_object.actions.address.address_countryRegion,
                     'profile_photo': json_object.profile_photo,
                     'company_logo': json_object.company_logo
                     };

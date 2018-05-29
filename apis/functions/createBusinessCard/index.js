@@ -3,10 +3,11 @@ const randomBytes = require('crypto').randomBytes;
 const AWS = require('aws-sdk');
 const ddb = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3();
-var Promise = require("bluebird");
-var fs = Promise.promisifyAll(require("fs"));
+var Bluebird = require("bluebird");
+var fs = Bluebird.promisifyAll(require("fs"));
 var qr = require('qr-image');
 var vCard = require('vcards-js');
+const uuid = require('uuid/v4');
 
 
 // Constants
@@ -28,44 +29,26 @@ exports.handle = (event, context, callback) => {
     console.log('processing event')
     console.log(event)
     
-    // Test input for API Gateway
-    // ==========================
-    // {'full_name': 'Preston Lim',
-    //  'first_name': 'Preston',
-    //  'last_name': 'Lim', 
-    //  'role': 'Associate Software Engineer', 
-    //  'company': 'Data Science Division, GovTech',
-    //  'email': 'preston@data.gov.sg',
-    //  'phone_number': '+65 9123 4567',
-    //  'website': 'https://tech.gov.sg',
-    //  'address_street': '1 Fusionopolis, Sandcrawler, #09-01',
-    //  'address_city': 'Singapore',
-    //  'address_stateProvince': 'Singapore',
-    //  'address_postalCode': '138577',
-    //  'address_countryRegion': 'Singapore'
-    //  'profile_photo': [blob],
-    //  'company_logo': [blob],
-    // }
-    
     // Generate UUIDs for eaach card and image group to prevent filename conflicts
-    const cardId = toUrlString(randomBytes(16));
+    const cardId = uuid();
+    console.log(cardId);
     var json_object = JSON.parse(event.body)
-    var params = {'full_name': json_object.full_name,
+    var params = {'full_name': json_object.first_name + " " + json_object.last_name,
                     'first_name': json_object.first_name,
                     'last_name': json_object.last_name, 
                     'role': json_object.role, 
                     'company': json_object.company,
-                    'email': json_object.email,
-                    'phone_number': json_object.phone_number,
-                    'website': json_object.website,
-                    'address_street': json_object.address_street,
-                    'address_city': json_object.address_city,
-                    'address_stateProvince': json_object.address_stateProvince,
-                    'address_postalCode': json_object.address_postalCode,
-                    'address_countryRegion': json_object.address_countryRegion,
-                    'address': json_object.address_street + ", " + json_object.address_city + ", " + json_object.address_stateProvince + ", " + json_object.address_postalCode + ", " + json_object.address_countryRegion
-                    // 'profile_photo': json_object.profile_photo,
-                    // 'company_logo': json_object.company_logo
+                    'email': json_object.actions.email.value,
+                    'phone_number': json_object.actions.phone_number.value,
+                    'website': json_object.actions.website.value,
+                    'address_street': json_object.actions.address.address_street,
+                    'address_city': json_object.actions.address.address_city,
+                    'address_stateProvince': json_object.actions.address.address_stateProvince,
+                    'address_postalCode': json_object.actions.address.address_postalCode,
+                    'address_countryRegion': json_object.actions.address.address_countryRegion,
+                    'address': json_object.actions.address.address_street + ", " + json_object.actions.address.address_city + ", " + json_object.actions.address.address_stateProvince + ", " + json_object.actions.address.address_postalCode + ", " + json_object.actions.address.address_countryRegion,
+                    'profile_photo': json_object.profile_photo,
+                    'company_logo': json_object.company_logo
                     };
 
     console.log("printing out params...")
@@ -76,6 +59,34 @@ exports.handle = (event, context, callback) => {
     var mainHTMLName = 'users/' + cardId + '/index.html';
     var qrFileName = 'users/' + cardId + '/qr.png';
     var vcfName = 'users/' + cardId + '/user.vcf';
+
+    // Step 1: Generate the static HTML website using the user input
+    var promise1 = renderTemplate(params, readFileName, mainHTMLName, bucket)
+    
+    // Step 2: Generate the VCF using the user input
+    var promise2 = generateVCard(params, vcfName, bucket);
+
+    // Step 3: Generate the QR code file
+    var promise3 = generateQRCode(qrFileName, bucketURL + mainHTMLName);
+
+    // Step 4: Upload profile and company photo to bucket
+    var promise4 = uploadImageToS3(cardId, 'profile.png', params.profile_photo);
+    var promise5 = uploadImageToS3(cardId, 'logo.png', params.company_logo);
+
+    // Step 5: Store the user input and file information into the dynamoDB table
+    // then return the CardId to the user/QR code IP address
+    var promiseAll = Promise.all([promise1, promise2, promise3, promise4, promise5]);
+    
+    promiseAll.then(()=> {
+        console.log("All promises resolved");
+        return recordCardInfo(cardId, params);
+    }).then((data) => {
+        console.log('Record successfully added into dynamodb: ' + data.CardId);
+        callback(null);
+    }).catch((err) => {
+        console.error(err);
+        errorResponse(err.message, params.awsRequestId, callback);
+    });
 
     var responseBody = {
         path: bucketURL + mainHTMLName,
@@ -90,33 +101,8 @@ exports.handle = (event, context, callback) => {
         body: JSON.stringify(responseBody)
     };
 
-    // Step 1: Generate the static HTML website using the user input
-    var promise1 = renderTemplate(params, readFileName, mainHTMLName, bucket)
-    
-    // Step 2: Generate the VCF using the user input
-    var promise2 = generateVCard(params, vcfName, bucket);
-
-    // Step 3a: Upload profile and company photo to bucket
-    // var promise3ai = uploadImageToS3(cardId, 'profile.png', params.profile_photo);
-    // var promise3aii = uploadImageToS3(cardId, 'logo.png', params.company_logo);
-
-    // Step 3b: Generate the QR code file
-    var promise3b = generateQRCode(qrFileName, bucketURL + mainHTMLName);
-
-    // Step 4: Store the user input and file information into the dynamoDB table
-    // then return the CardId to the user/QR code IP address
-
-    Promise.all([promise1, promise2, promise3b])
-    .then(recordCardInfo(cardId, params))
-    .then(() => {
-        console.log('Record successfully added into dynamodb');
-        console.log("response: " + JSON.stringify(response))
-        callback(null, response);
-    }).catch((err) => {
-        console.log('DynamoDB error');
-        console.error(err);
-        errorResponse(err.message, params.awsRequestId, callback);
-    });
+    console.log("response: " + JSON.stringify(response))
+    callback(null, response)
 };
 
 function uploadToS3(fileName, body, isHTML) {
@@ -156,6 +142,7 @@ function uploadImageToS3(cardId, fileName, imageBinary) {
 
 // Generate the VCF using 'vcf'
 function generateVCard(params, vcfName){
+    console.log('In generateVCard()');
     return new Promise((resolve, reject) => {
         vCard = vCard();
 
@@ -176,14 +163,13 @@ function generateVCard(params, vcfName){
         vCard.workAddress.postalCode = params['address_postalCode'];
         vCard.workAddress.countryRegion = params['address_countryRegion'];
 
-        console.log(vCard.getFormattedString());
-
         uploadToS3(vcfName, vCard.getFormattedString(), false);
-    });
+    })
 }
 
 // Use handlebars to render the HTML from template; returns a Promise
 function renderTemplate(params, readFileName, writeFileName, bucket) {
+    console.log('In renderTemplate()');
     return new Promise((resolve, reject) => {
         fs.readFileAsync(readFileName)
         .then((data) => {
@@ -191,20 +177,22 @@ function renderTemplate(params, readFileName, writeFileName, bucket) {
             var template = handlebars.compile(source); // Handlebars at work
             var renderedTemplate = template(params);
             uploadToS3(writeFileName, renderedTemplate, true);
+            // return fs.writeFileAsync(writeFileName, template(params));
         });
-    });
+    })
 }
 
 function generateQRCode(qrFileName, cardURL) {
+    console.log('In generateQRCode()');
     return new Promise((resolve, reject) => {
-        var qr_stream = qr.image(cardURL, { ec_level: 'H' });
-        uploadToS3(qrFileName, qr_stream, true);  
-    });
+        var qr_stream = qr.image(cardURL, { ec_level: 'M' });
+        uploadToS3(qrFileName, qr_stream, true);   
+    })
 }
 
 // Put the user input into dynamoDB
 function recordCardInfo(cardId, params) {
-    console.log('Begin recording card info into dynamoDB')
+    console.log('Start writing to dynamoDB');
     return ddb.put({
         TableName: 'DigitalBusinessCards',
         Item: {
@@ -215,14 +203,6 @@ function recordCardInfo(cardId, params) {
     }).promise();
 }
 
-
-// Generate a usable URL string from the random bytes
-function toUrlString(buffer) {
-    return buffer.toString('base64')
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_')
-        .replace(/=/g, '');
-}
 
 // Return a helpful error message
 function errorResponse(errorMessage, awsRequestId, callback) {

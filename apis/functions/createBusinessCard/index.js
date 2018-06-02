@@ -62,7 +62,7 @@ exports.handle = async (event, context, callback) => {
         console.log('start createBusinesCard...')
 
         // Generate UUIDs for eaach card and image group to prevent filename conflicts
-        const cardId = 'test'; //uuid();
+        const cardId = uuid();
         var s3_file_path = 'users/' + cardId
         var params = parseRequestObject(JSON.parse(event.body));
 

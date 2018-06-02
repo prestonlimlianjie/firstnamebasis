@@ -18,9 +18,9 @@ const s3 = Promise.promisifyAll(new AWS.S3());
 
 // Constants
 // =========
-const bucket = 'digital.business.card'
+const bucket = 'firstnamebasis.app'
 const templateFile = './assets/index.html';
-const bucketURL = 'http://digital.business.card.s3-website-ap-southeast-1.amazonaws.com/';
+const bucketURL = 'http://firstnamebasis.app.s3-website-ap-southeast-1.amazonaws.com/';
 
 // Test input for API Gateway
 // ==========================

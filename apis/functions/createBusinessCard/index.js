@@ -129,8 +129,8 @@ async function generateVCard(params) {
         vCard.firstName = params['first_name'];
         vCard.lastName = params['last_name'];
         vCard.organization = params['company'];
-        // vCard.photo.embedFromString(params.profile_photo, 'img/png');
-        // vCard.logo.embedFromString(params.company_logo, 'img/png');
+        vCard.photo.embedFromString(params['profile_photo'].toString('base64'), 'img/png');
+        // vCard.logo.embedFromString(params['company_logo'].toString('base64'), 'img/png');
         vCard.workPhone = params['phone_number'];
         vCard.title = params['role'];
         vCard.workUrl = params['website'];

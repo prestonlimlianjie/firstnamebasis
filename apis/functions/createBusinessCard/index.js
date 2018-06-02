@@ -81,8 +81,11 @@ exports.handle = async (event, context, callback) => {
 
         let recordId = await saveUserToDb(cardId, params);
 
+        respondSuccess(callback, cardId)
+
     } catch (err) {
         console.log("failed to createBusinessCard: ", err)
+        respondError(callback, cardId, err)
     }
 };
 
@@ -177,8 +180,10 @@ async function generateQRCode(cardId) {
 
 // Put the user input into dynamoDB
 async function saveUserToDb(cardId, params) {
-    console.log('Start recording card info into dynamoDB')
+    console.log('Start recording card info into dynamoDB: ', cardId)
     try {
+        delete params.profile_photo
+        delete params.company_logo
         let saveUser = await ddb.putAsync({
             TableName: 'DigitalBusinessCards',
             Item: {
@@ -217,7 +222,7 @@ function parseRequestObject(request_object) {
 }
 
 // Return a helpful error message
-function errorResponse(callback, cardId, errorMessage) {
+function respondError(callback, cardId, errorMessage) {
     callback(null, {
         statusCode: 500,
         headers: {
@@ -231,7 +236,7 @@ function errorResponse(callback, cardId, errorMessage) {
     });
 };
 
-function successResponse(callback, cardId) {
+function respondSuccess(callback, cardId) {
     callback(null, {
         statusCode: 200,
         headers: {

@@ -5,5 +5,5 @@
   "timeout": 5,
   "role": "arn:aws:iam::365136181569:role/digital-business-card_lambda_function",
   "environment": {},
-  "runtime": "nodejs6.10"
+  "runtime": "nodejs8.10"
 }

@@ -4,7 +4,7 @@ const randomBytes = require('crypto').randomBytes;
 var Promise = require("bluebird");
 var fs = Promise.promisifyAll(require("fs"));
 var qr = require('qr-image');
-var vCard = require('vcards-js');
+var vCardJS = require('vcards-js');
 const uuid = require('uuid/v4');
 
 const AWS = require('aws-sdk');
@@ -60,6 +60,7 @@ exports.handle = async (event, context, callback) => {
 // main = async() => {
     try {
         console.log('start createBusinesCard...')
+        console.log('event: ', event)
 
         // Generate UUIDs for eaach card and image group to prevent filename conflicts
         const cardId = uuid();
@@ -85,7 +86,7 @@ exports.handle = async (event, context, callback) => {
 
     } catch (err) {
         console.log("failed to createBusinessCard: ", err)
-        respondError(callback, cardId, err)
+        respondError(callback, err)
     }
 };
 
@@ -123,12 +124,13 @@ async function uploadToS3(s3_file_path, s3_file_name, file_type, file_body) {
 async function generateVCard(params) {
     console.log("Start generating VCard...")
     try {
-        vCard = vCard();
+        vCard = vCardJS();
         //set properties
         vCard.firstName = params['first_name'];
         vCard.lastName = params['last_name'];
         vCard.organization = params['company'];
-        // vCard.photo.attachFromUrl('https://avatars2.githubusercontent.com/u/5659221?v=3&s=460', 'JPEG');
+        // vCard.photo.embedFromString(params.profile_photo, 'img/png');
+        // vCard.logo.embedFromString(params.company_logo, 'img/png');
         vCard.workPhone = params['phone_number'];
         vCard.title = params['role'];
         vCard.workUrl = params['website'];
@@ -168,7 +170,7 @@ async function generateHTML(params) {
 async function generateQRCode(cardId) {
     console.log("Start generating QR Code...")
     try {
-        var cardURL = bucketURL + 'users/' + cardId + '/qr.png'
+        var cardURL = bucketURL + 'users/' + cardId + '/index.html'
         var qr_code = qr.image(cardURL, { ec_level: 'H' });
         console.log("generateQRCode: Sucess!")
         return Promise.resolve(qr_code)
@@ -200,6 +202,10 @@ async function saveUserToDb(cardId, params) {
     };
 };
 
+function processImageBinary(image_binary) {
+    return new Buffer(image_binary.replace(/^data:image\/\w+;base64,/, ""),'base64')
+}
+
 function parseRequestObject(request_object) {
     return {
         'full_name': request_object.first_name + request_object.last_name,
@@ -216,8 +222,8 @@ function parseRequestObject(request_object) {
         'address_postalCode': request_object.actions.address.address_postalCode,
         'address_countryRegion': request_object.actions.address.address_countryRegion,
         'address': request_object.actions.address.address_street + ", " + request_object.actions.address.address_city + ", " + request_object.actions.address.address_stateProvince + ", " + request_object.actions.address.address_postalCode + ", " + request_object.actions.address.address_countryRegion,
-        'profile_photo': request_object.profile_photo,
-        'company_logo': request_object.company_logo
+        'profile_photo': processImageBinary(request_object.profile_photo),
+        'company_logo': processImageBinary(request_object.company_logo)
     };
 }
 

@@ -1,6 +1,6 @@
 {
   "description": "API endpoint to generate business card",
-  "runtime": "nodejs",
+  "runtime": "nodejs8.1",
   "memory": 128,
   "timeout": 30,
   "build": "npm install",

@@ -208,7 +208,7 @@ function processImageBinary(image_binary) {
 
 function parseRequestObject(request_object) {
     return {
-        'full_name': request_object.first_name + request_object.last_name,
+        'full_name': request_object.first_name + " " + request_object.last_name,
         'first_name': request_object.first_name,
         'last_name': request_object.last_name, 
         'role': request_object.role, 

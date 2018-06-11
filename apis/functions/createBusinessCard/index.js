@@ -18,7 +18,7 @@ const s3 = Promise.promisifyAll(new AWS.S3());
 
 // Constants
 // =========
-const bucket = 'firstnamebasis.app'
+const bucket = 'firstnamebasis.app';
 const templateFile = './assets/index.html';
 const bucketURL = 'http://firstnamebasis.app.s3-website-ap-southeast-1.amazonaws.com/';
 
@@ -223,8 +223,18 @@ function parseRequestObject(request_object) {
         'address_countryRegion': request_object.actions.address.address_countryRegion,
         'address': request_object.actions.address.address_street + ", " + request_object.actions.address.address_city + ", " + request_object.actions.address.address_stateProvince + ", " + request_object.actions.address.address_postalCode + ", " + request_object.actions.address.address_countryRegion,
         'profile_photo': processImageBinary(request_object.profile_photo),
-        'company_logo': processImageBinary(request_object.company_logo)
+        'company_logo': processImageBinary(request_object.company_logo),
+        'github': request_object.github,
+        'linkedin': request_object.linkedin,
+        'facebook': request_object.facebook,
+        'medium': request_object.medium,
+        'instagram': request_object.instagram,
+        'additional_info': additionalInfoExists(request_object.github, request_object.linkedin, request_object.facebook, request_object.medium, request_object.instagram)
     };
+}
+
+function additionalInfoExists(github, linkedin, facebook, medium, instagram) {
+    return (Boolean(github) || Boolean(linkedin) || Boolean(facebook) || Boolean(medium) || Boolean(instagram))
 }
 
 // Return a helpful error message

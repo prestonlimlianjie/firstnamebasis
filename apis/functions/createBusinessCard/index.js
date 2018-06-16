@@ -1,5 +1,5 @@
 const handlebars = require('handlebars');
-const randomBytes = require('crypto').randomBytes;
+const fileType = require('file-type');
 
 var Promise = require("bluebird");
 var fs = Promise.promisifyAll(require("fs"));
@@ -8,11 +8,6 @@ var vCardJS = require('vcards-js');
 const uuid = require('uuid/v4');
 
 const AWS = require('aws-sdk');
-
-// var credentials = new AWS.SharedIniFileCredentials({profile: 'digital-namecard'});
-// AWS.config.credentials = credentials;
-// AWS.config.update({region: 'ap-southeast-1'});
-
 const ddb = Promise.promisifyAll(new AWS.DynamoDB.DocumentClient());
 const s3 = Promise.promisifyAll(new AWS.S3());
 
@@ -21,38 +16,6 @@ const s3 = Promise.promisifyAll(new AWS.S3());
 const bucket = 'firstnamebasis.app';
 const templateFile = './assets/index.html';
 const bucketURL = 'http://firstnamebasis.app.s3-website-ap-southeast-1.amazonaws.com/';
-
-// Test input for API Gateway
-// ==========================
-// var event = {
-//     "body": JSON.stringify({
-//         "full_name": "Preston Lim",
-//         "first_name": "Preston",
-//         "last_name": "Lim", 
-//         "role": "Associate Software Engineer", 
-//         "company": "Data Science Division, GovTech",
-//         "profile_photo": "[blob]",
-//         "company_logo": "[blob]",
-//         "actions": {
-//             "email": {
-//                 "value": "preston@data.gov.sg"
-//             },
-//             "phone_number": {
-//                 "value": "+65 9123 4567"
-//             },
-//             "website": {
-//                 "value": "https://tech.gov.sg"
-//             },
-//             "address": {
-//                 "address_street": "1 Fusionopolis, Sandcrawler, #09-01",
-//                 "address_city": "Singapore",
-//                 "address_stateProvince": "Singapore",
-//                 "address_postalCode": "138577",
-//                 "address_countryRegion": "Singapore"
-//             }
-//         }
-//     })
-// }
 
 // Lambda function proper
 // ======================
@@ -65,7 +28,9 @@ exports.handle = async (event, context, callback) => {
         // Generate UUIDs for eaach card and image group to prevent filename conflicts
         const cardId = uuid();
         var s3_file_path = 'users/' + cardId
-        var params = parseRequestObject(JSON.parse(event.body));
+        var params = parseRequestObject(JSON.parse(event.body))
+
+        console.log(params)
 
         let files = await Promise.all([
                         generateHTML(params),
@@ -76,8 +41,8 @@ exports.handle = async (event, context, callback) => {
             uploadToS3( s3_file_path, 'index.html', 'html', files[0]), // files[0]: HTML
             uploadToS3( s3_file_path, 'user.vcf', 'vcf', files[1]), // files[1]: VCard
             uploadToS3( s3_file_path, 'qr.png', 'png', files[2]), // files[2]: QR Code
-            uploadToS3( s3_file_path, 'profile_photo.png', 'png', params['profile_photo']), // profile_photo
-            uploadToS3( s3_file_path, 'company_logo.png', 'png', params['company_logo']), // company_logo
+            uploadToS3( s3_file_path, 'profile_photo.' + params['profile_photo_filetype'].ext , params['profile_photo_filetype'].mime, params['profile_photo']), // profile_photo
+            uploadToS3( s3_file_path, 'company_logo.' + params['company_logo_filetype'].ext, params['company_logo_filetype'].mime, params['company_logo']), // company_logo
         ]);
 
         let recordId = await saveUserToDb(cardId, params);
@@ -90,10 +55,7 @@ exports.handle = async (event, context, callback) => {
     }
 };
 
-// main()
-
-
-
+// Upload helper function
 async function uploadToS3(s3_file_path, s3_file_name, file_type, file_body) {
     console.log("Start uploading file to s3: ", s3_file_path, "; ", s3_file_name, "; ", file_type)
     try {
@@ -107,6 +69,9 @@ async function uploadToS3(s3_file_path, s3_file_name, file_type, file_body) {
         } else if (file_type == "png") {
             params["ContentEncoding"] = 'base64'
             params["ContentType"] = 'image/png'
+        } else if (file_type == "jpeg") {
+            params["ContentEncoding"] = 'base64'
+            params["ContentType"] = 'image/jpeg'
         } else if (file_type == "vcf") {
             params["ContentType"] = 'text/x-vcard'
         }
@@ -129,7 +94,7 @@ async function generateVCard(params) {
         vCard.firstName = params['first_name'];
         vCard.lastName = params['last_name'];
         vCard.organization = params['company'];
-        vCard.photo.embedFromString(params['profile_photo'].toString('base64'), 'img/png');
+        vCard.photo.embedFromString(params['profile_photo'].toString('base64'), 'img/' + params['profile_photo_filetype'].ext);
         // vCard.logo.embedFromString(params['company_logo'].toString('base64'), 'img/png');
         vCard.workPhone = params['phone_number'];
         vCard.title = params['role'];
@@ -222,7 +187,9 @@ function parseRequestObject(request_object) {
         'address_postalCode': request_object.actions.address.address_postalCode,
         'address_countryRegion': request_object.actions.address.address_countryRegion,
         'address': request_object.actions.address.address_street + ", " + request_object.actions.address.address_city + ", " + request_object.actions.address.address_stateProvince + ", " + request_object.actions.address.address_postalCode + ", " + request_object.actions.address.address_countryRegion,
+        'profile_photo_filetype': fileType(processImageBinary(request_object.profile_photo)),
         'profile_photo': processImageBinary(request_object.profile_photo),
+        'company_logo_filetype': fileType(processImageBinary(request_object.company_logo)),
         'company_logo': processImageBinary(request_object.company_logo),
         'github': request_object.github,
         'linkedin': request_object.linkedin,

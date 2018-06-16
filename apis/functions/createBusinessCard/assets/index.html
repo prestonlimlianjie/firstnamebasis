@@ -2,28 +2,34 @@
 <html>
 
 <head>
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<link rel="stylesheet" href="../../assets/main.css">
-	<script src="../../assets/main.js"></script>
-	<link href="https://fonts.googleapis.com/css?family=Lato:200,300,400,700" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="/assets/main.css">
+	<link href='https://fonts.googleapis.com/css?family=Lato:200,300,400,700' rel='stylesheet' type='text/css'>
 	<link href="https://fonts.googleapis.com/css?family=Muli:200,300" rel="stylesheet">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 
 <body>
-	<section class="bg-color-grey banner">
+	<section class="bg-color-navbar navbar">
 		<div class="container">
 			<div class="row">
-				<div class="col"></div>
-				<div class="col is-5">
-					<img id="profile-pic" src="profile_photo.png" alt="Profile Picture">
+				<div class="col">
+					<a href="https://firstnamebasis.app">
+						<span class="app-icon">firstnamebasis<i class="app-icon"></i></span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="bg-color-hero banner">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<img id="profile-pic" class="profile-pic" src="profile_photo.{{profile_photo_filetype.ext}}" alt="Profile Picture">
 					<img id="qr-code" src="qr.png" alt="QR Code">
 				</div>
 				<div class="col">
-					<label class="switch">
-					  <input id="slider" type="checkbox" onchange="checkBox()">
-					  <span class="slider round"></span>
-					</label>
+					<a id="share-button" class="share-button"><img src="/assets/icon-qr.svg"></a>
 				</div>
 			</div>
 		</div>
@@ -38,24 +44,62 @@
 					<p class="text-title-company">{{company}}</p>
 				</div>
 				<div class="col">
-					<img src="company_logo.png" alt="Company Logo">
+					<img class="company-logo" src="company_logo.{{company_logo_filetype.ext}}" alt="Company Logo">
 				</div>
 			</div>
 		</div>
 	</section>
+
+	{{#if additional_info}}
+	<section class="bg-color-white additional-info">
+		<div class="container">
+			<div class="row name-title-company">
+				{{#if github}}
+				<div class="col">
+					<a href="{{github}}">
+						<img src="assets/icon-github.svg">
+					</a>
+				</div>
+				{{/if}}
+				{{#if linkedin}}
+				<div class="col">
+					<a href="{{linkedin}}">
+						<img src="assets/icon-linkedin.svg">
+					</a>
+				</div>
+				{{/if}}
+				{{#if facebook}}
+				<div class="col">
+					<a href="{{facebook}}">
+						<img src="assets/icon-facebook.svg">
+					</a>
+				</div>
+				{{/if}}
+				{{#if medium}}
+				<div class="col">
+					<a href="{{medium}}">
+						<img src="assets/icon-medium.svg">
+					</a>
+				</div>
+				{{/if}}
+				{{#if instagram}}
+				<div class="col">
+					<a href="{{instagram}}">
+						<img src="assets/icon-instagram.svg">
+					</a>
+				</div>
+				{{/if}}
+			</div>
+		</div>
+	</section>
+	{{/if}}
 
 	<section class="bg-color-white secondary-info">
 		<a href="mailto:{{email}}">
 			<div class="container">
 				<div class="row detail">
 					<div class="col">
-						<img src="../../assets/icon-email.svg" alt="Email Icon"">
-					</div>
-					<div class="col is-8">
-						<p class="text-detail">{{email}}</p>
-					</div>
-					<div class="col">
-						<img src="../../assets/right-arrow.svg" alt="Right Arrow" height="50%" width="40%">
+						<p class="text-detail email-icon">{{email}}</p>
 					</div>
 				</div>
 			</div>
@@ -67,13 +111,7 @@
 			<div class="container">
 				<div class="row detail">
 					<div class="col">
-						<img src="../../assets/icon-phone.svg" alt="Phone Icon"">
-					</div>
-					<div class="col is-8">
-						<p class="text-detail">{{phone_number}}</p>
-					</div>
-					<div class="col">
-						<img src="../../assets/right-arrow.svg" alt="Right Arrow" height="50%" width="40%">
+						<p class="text-detail phone-icon">{{phone_number}}</p>
 					</div>
 				</div>
 			</div>
@@ -85,13 +123,7 @@
 			<div class="container">
 				<div class="row detail">
 					<div class="col">
-						<img src="../../assets/icon-website.svg" alt="Website Icon"">
-					</div>
-					<div class="col is-8">
-						<p class="text-detail">{{website}}</p>
-					</div>
-					<div class="col">
-						<img src="../../assets/right-arrow.svg" alt="Right Arrow" height="50%" width="40%">
+						<p class="text-detail website-icon">{{website}}</p>
 					</div>
 				</div>
 			</div>
@@ -103,14 +135,8 @@
 			<div class="container">
 				<div class="row detail">
 					<div class="col">
-						<img src="../../assets/icon-address.svg" alt="Address Icon"">
-					</div>
-					<div class="col is-8">
-						<p class="text-detail">{{address}}</p>
-					</div>
-					<div class="col">
-						<img src="../../assets/right-arrow.svg" alt="Right Arrow" height="50%" width="40%">
-					</div>
+						<p class="text-detail address-icon">{{address}}</p>
+					</div
 				</div>
 			</div>
 		</a>
@@ -119,19 +145,18 @@
 	<section class="bg-color-white bottom">
 		<div class="container">
 			<div class="row">
-				<div class="col"></div>
-				<div class="col is-5">
-					<div class="button">
-						<a href="user.vcf">
-							<p class="button">Download</p>
-						</a>
-					</div>
+				<div class="col horizontal-center-child">
+					<a href="user.vcf">
+						<button class="button">
+							Save Contact
+						</button>
+					</a>
 				</div>
-				<div class="col"></div>
 			</div>
 		</div>
 	</section>
 
+<script src="/assets/main.js"></script>
 </body>
 
 </html>

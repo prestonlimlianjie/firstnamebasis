@@ -183,27 +183,32 @@ img.company-logo {
 	background-color: white;
 }
 
+.row.detail {
+	margin-top: 0.5rem;
+}
+
 .text-name {
     font-family: 'Lato', sans-serif;
     font-weight: 500;
     color: #333333;
-    font-size: 20px;
+    font-size: 22px;
 }
 
 .text-title-company {
     font-family: 'Lato', sans-serif;
-    font-weight: 200;
+    font-weight: 300;
     color: #333333;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .text-detail {
     font-family: 'Lato', sans-serif;
     font-weight: 300;
-    color: #575757;
-    font-size: 12px;
+    color: #333333;
+    font-size: 13px;
     position: relative;
 	transform: translateY(-5%); 
+	letter-spacing: 0.15px;
 }
 
 .bottom {

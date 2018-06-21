@@ -171,6 +171,20 @@ function processImageBinary(image_binary) {
     return new Buffer(image_binary.replace(/^data:image\/\w+;base64,/, ""),'base64')
 }
 
+function generateAddressString(addressObject) {
+    var addressString = addressObject.address_street
+    if (addressObject.address_city) {
+        addressString += ", " + addressObject.address_city
+    }
+    if (addressObject.address_stateProvince) {
+        addressString += ", " + addressObject.address_stateProvince
+    }
+    if (addressObject.address_postalCode) {
+        addressString += ", " + addressObject.address_postalCode
+    }
+    return (addressString + ", " + addressObject.address_countryRegion)
+}
+
 function parseRequestObject(request_object) {
     return {
         'full_name': request_object.first_name + " " + request_object.last_name,
@@ -186,7 +200,7 @@ function parseRequestObject(request_object) {
         'address_stateProvince': request_object.actions.address.address_stateProvince,
         'address_postalCode': request_object.actions.address.address_postalCode,
         'address_countryRegion': request_object.actions.address.address_countryRegion,
-        'address': request_object.actions.address.address_street + ", " + request_object.actions.address.address_city + ", " + request_object.actions.address.address_stateProvince + ", " + request_object.actions.address.address_postalCode + ", " + request_object.actions.address.address_countryRegion,
+        'address': generateAddressString(request_object.actions.address),
         'profile_photo_filetype': fileType(processImageBinary(request_object.profile_photo)),
         'profile_photo': processImageBinary(request_object.profile_photo),
         'company_logo_filetype': fileType(processImageBinary(request_object.company_logo)),

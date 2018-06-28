@@ -1,9 +1,9 @@
 html,
 body {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  justify-content: center;
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	justify-content: center;
 }
 
 section {
@@ -262,7 +262,7 @@ img.company-logo {
 i.app-icon {
 	text-align: center;
 	vertical-align: middle;
-	background: url("/assets/icon-firstnamebasis.svg") no-repeat;
+	background: url("/assets/icon-app.png") no-repeat;
 	background-size: 95%;
     content: "";
     display: inline-block;

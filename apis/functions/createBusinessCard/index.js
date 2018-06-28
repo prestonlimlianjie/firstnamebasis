@@ -76,7 +76,7 @@ async function uploadToS3(s3_file_path, s3_file_name, file_type, file_body) {
             params["ContentType"] = 'text/x-vcard'
         }
         let uploadFile = await s3.uploadAsync(params);
-        console.log("uploadToS3: Sucess!")
+        console.log("uploadToS3: Success!")
         return Promise.resolve(uploadFile)
 
     } catch (err) {
@@ -107,7 +107,7 @@ async function generateVCard(params) {
         vCard.workAddress.stateProvince = params['address_stateProvince'];
         vCard.workAddress.postalCode = params['address_postalCode'];
         vCard.workAddress.countryRegion = params['address_countryRegion'];
-        console.log("generateVCard: Sucess!")
+        console.log("generateVCard: Success!")
         return new Promise.resolve(vCard.getFormattedString());
     } catch (err) {
         console.log("Failed to generate VCard: ", err)
@@ -123,7 +123,7 @@ async function generateHTML(params) {
         var template = template_file.toString('utf8');
         var templatin_engine = handlebars.compile(template);
         var rendered_template = templatin_engine(params);
-        console.log("generateHTML: Sucess!")
+        console.log("generateHTML: Success!")
         return new Promise.resolve(rendered_template);
     } catch (err) {
         console.log("Failed to generate HTML: ", err)
@@ -137,7 +137,7 @@ async function generateQRCode(cardId) {
     try {
         var cardURL = bucketURL + 'users/' + cardId + '/index.html'
         var qr_code = qr.image(cardURL, { ec_level: 'H' });
-        console.log("generateQRCode: Sucess!")
+        console.log("generateQRCode: Success!")
         return Promise.resolve(qr_code)
     } catch (err) {
         console.log("Failed to generate QR Code: ", err)
@@ -159,7 +159,7 @@ async function saveUserToDb(cardId, params) {
                 RequestTime: new Date().toISOString(),
             },
         })
-        console.log("saveUserToDb: Sucess!")
+        console.log("saveUserToDb: Success!")
         return Promise.resolve(saveUser)
     } catch (err) {
         console.log("Failed to save user into dynamodb: ", err)

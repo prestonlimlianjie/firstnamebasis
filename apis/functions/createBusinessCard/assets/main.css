@@ -51,8 +51,8 @@ img.profile-pic {
 
 img.company-logo {
 	margin-right: 0;
-	height: 75%;
-	width: 75%;
+	height: 75px;
+	width: auto;
 }
 
 .icon-div {

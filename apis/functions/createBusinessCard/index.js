@@ -15,7 +15,7 @@ const s3 = Promise.promisifyAll(new AWS.S3());
 // =========
 const bucket = 'firstnamebasis.app';
 const templateFile = './assets/index.html';
-const bucketURL = 'http://firstnamebasis.app.s3-website-ap-southeast-1.amazonaws.com/';
+const bucketURL = 'http://firstnamebasis.app/';
 
 // Lambda function proper
 // ======================
@@ -259,7 +259,7 @@ function respondSuccess(callback, cardId) {
             "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS 
         },
         body: JSON.stringify({
-            path: 'https://firstnamebasis.app/users/' + cardId + '/index.html',
+            path: 'https://firstnamebasis.app/users/' + cardId,
         })
     })
 };

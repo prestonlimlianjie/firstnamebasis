@@ -5,7 +5,7 @@
 	<title>firstnamebasis</title>
 	<link rel="stylesheet" href="/assets/main.css">
 	<link href='https://fonts.googleapis.com/css?family=Lato:200,300,400,700' rel='stylesheet' type='text/css'>
-	<link href="https://fonts.googleapis.com/css?family=Muli:200,300" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Muli:200,300,400" rel="stylesheet">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 	<link rel="icon" type="image/png" sizes="64x64" href="/assets/app-favicon.png">
 	<link rel="apple-touch-icon" sizes="180x180" href="/assets/homescreen-icon.png">
@@ -22,6 +22,23 @@
 </head>
 
 <body>
+	<div class="opaque-background" id="opaque-background"></div>
+	<div class="modal" id="modal">
+		<img class="modal-icon" src="/assets/modal-icon.svg">
+		<div>
+			<p class="modal-title"> Save to Home Screen </p>
+			<p class="modal-subtitle"> Tap <img class="share-icon" src="/assets/share-icon.png"> then 'Add to Home Screen' </p>
+			<div class="container">
+				<div class="row">
+					<div class="col horizontal-center-child">
+						<button class="modal-button button" id="modal-button">
+							Done
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	<section class="bg-color-navbar navbar">
 		<div class="container">
 			<div class="row">

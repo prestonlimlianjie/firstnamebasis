@@ -106,7 +106,7 @@ async function generateVCard(params) {
 
         vCard.workAddress.label = 'Work Address';
         vCard.workAddress.street = params['address_street']
-        
+
         if (params['address_city']) {
             vCard.workAddress.city = params['address_city'];
         }
@@ -246,7 +246,7 @@ function respondError(callback, cardId, errorMessage) {
         },
         body: JSON.stringify({
             error: errorMessage,
-            path: bucketURL + 'users/' + cardId + '/index.html',
+            path: 'https://firstnamebasis.app/users/' + cardId + '/index.html',
         })
     });
 };
@@ -259,7 +259,7 @@ function respondSuccess(callback, cardId) {
             "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS 
         },
         body: JSON.stringify({
-            path: bucketURL + 'users/' + cardId + '/index.html',
+            path: 'https://firstnamebasis.app/users/' + cardId + '/index.html',
         })
     })
 };

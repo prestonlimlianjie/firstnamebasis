@@ -15,6 +15,7 @@ body {
 }
 .navbar span {
 	font-family: 'Muli', sans-serif;
+	font-size: 14px;
 }
 
 i.app-icon {

@@ -288,3 +288,59 @@ i.app-icon {
 .share-button:hover {
 	cursor: pointer;
 }
+
+.modal {
+	top: 50%;
+    left: 50%;
+    z-index: 3;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 500px;
+    background: -webkit-linear-gradient(#2F80ED, #2D9CDB, #2D9CBD 50%, #FFFFFF 50%);
+    background: linear-gradient(#2F80ED, #2D9CDB, #2D9CBD 50%, #FFFFFF 50%);
+    text-align: center;
+    border-radius: 0.75rem;
+    font-family: 'Lato', sans-serif;
+    display: none;
+}
+
+.modal-button {
+	font-size: 18px;
+}
+
+.modal-title {
+	font-size: 22px;
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+    color: #00122A;
+}
+
+.modal-subtitle {
+	font-size: 18px;
+	margin-left: 1rem !important;
+	margin-right: 1rem !important;
+	padding-bottom: 2rem;
+}
+.modal-icon {
+	width: 100px;
+	height: 250px;
+}
+
+.share-icon {
+	width: 18px;
+	height: 18px;
+	display: inline-block;
+}
+
+.opaque-background {
+	top: 0;
+	left: 0;
+	z-index: 2;
+	position: fixed;
+	background-color: #00122A;
+	opacity: 0.9;
+	width: 100%;
+	height: 100%;
+	display: none;
+}

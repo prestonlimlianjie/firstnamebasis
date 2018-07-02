@@ -1,0 +1,60 @@
+@media (min-width: 1200px) {
+  .container {
+    width: 800px;
+  }
+}
+
+body {
+	font-family: 'Lato', sans-serif;
+	
+}
+
+.navbar {
+	background: #00122a;
+	text-align: center;
+}
+
+.navbar-brand {
+	font-size: 1rem!important;
+	width: 50%;
+  margin: 0 auto;
+}
+
+
+
+.intro-container {
+	background: #00122a;
+	padding-top: 150px;
+	padding-bottom: 150px;
+	border-bottom: 1px solid grey;
+}
+
+.intro-container h1 {
+	padding-bottom: 20px;
+	background: -webkit-linear-gradient(#2F80ED, #2D9CDB);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.form-container {
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
+
+.form-control {
+	background-color: #F2F2F2;	
+}
+
+h1, h2, h3, h4 {
+	color: #00122a;
+	padding-bottom: 30px;
+}
+
+.btn {
+	background-color: transparent;
+}
+
+input, textarea {
+	border-radius: 0px!important;
+	border: 0px!important;
+}

@@ -58,12 +58,12 @@ $(document).ready(function() {
 
   $("form#signupForm").submit(function(e){
     e.preventDefault();
+    $("#loadingModal").modal('show');
 
     var getFormData = Promise.resolve($("#signupForm").serializeJSON())
     var getProfileImageBlob = getBase64($("input#profile_photo.form-control-file")[0].files[0])
     var getLogoImageBlob = getBase64($("input#company_logo.form-control-file")[0].files[0])
     
-
     var formPostObject = Promise.all([getFormData, getProfileImageBlob,getLogoImageBlob]).then((values) => {
       console.log(values[0])
       var postObject = values[0]
@@ -87,7 +87,7 @@ $(document).ready(function() {
     })
 
     postToEndpoint.then(function(response) {
-      console.log(response)
+
       // Redirect to create digital business card
       window.location.href = response.data.path;
     }).catch(function(error){
@@ -124,4 +124,3 @@ $(document).ready(function() {
 //   });
 
 });
-

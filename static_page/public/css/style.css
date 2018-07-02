@@ -1,0 +1,108 @@
+/*@media (min-width: 1200px) {
+  .container {
+    width: 1140px;
+  }
+}*/
+
+body {
+	font-family: 'Lato', sans-serif;
+	
+}
+
+.navbar {
+	background: #00122a;
+	text-align: center;
+}
+.navbar span {
+	font-family: 'Muli', sans-serif;
+	font-size: 14px;
+}
+
+i.app-icon {
+    text-align: center;
+    vertical-align: middle;
+    background: url(/assets/icon-app.png) no-repeat;
+    background-size: 95%;
+    content: "";
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-left: 5px;
+}
+
+.intro-container h1.landing-title {
+	font-family: 'Muli', sans-serif;
+	font-size: 40px;
+	letter-spacing: 0.25px;
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.lead {
+	font-size: 18px;
+	padding-bottom: 1.5rem;
+	letter-spacing: 0.25px;
+	font-weight: 300;
+}
+
+.left-half {
+	padding-bottom: 4rem;
+}
+
+.navbar-brand {
+	font-size: 1rem!important;
+	width: 50%;
+  	margin: 0 auto;
+}
+
+.btn {
+	border-radius: 2rem;
+	margin-right: 0.5rem;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+	font-size: 16px;
+	font-weight: 300;
+	letter-spacing: 0.5px;
+}
+
+.bg-blue-gradient {
+	background: linear-gradient(#2F80ED, #2D9CDB);
+	border: solid 1px #2F80ED;
+}
+
+.intro-container {
+	background: #00122a;
+	padding-top: 100px;
+	padding-bottom: 100px;
+	border-bottom: 1px solid grey;
+}
+
+.intro-container h1 {
+	padding-bottom: 20px;
+	background: -webkit-linear-gradient(#2F80ED, #2D9CDB);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.form-container {
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
+
+.form-control {
+	background-color: #F2F2F2;	
+}
+
+h1, h2, h3, h4 {
+	color: #00122a;
+	padding-bottom: 30px;
+}
+
+.btn {
+	background-color: transparent;
+}
+
+input, textarea {
+	border-radius: 0px!important;
+	border: 0px!important;
+}

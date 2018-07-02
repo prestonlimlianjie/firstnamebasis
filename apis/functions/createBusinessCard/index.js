@@ -98,14 +98,25 @@ async function generateVCard(params) {
         // vCard.logo.embedFromString(params['company_logo'].toString('base64'), 'img/png');
         vCard.workPhone = params['phone_number'];
         vCard.title = params['role'];
-        vCard.workUrl = params['website'];
+        if (params['website']) {
+            vCard.workUrl = params['website'];
+        }
+
         vCard.workEmail = params['email'];
 
         vCard.workAddress.label = 'Work Address';
         vCard.workAddress.street = params['address_street']
-        vCard.workAddress.city = params['address_city'];
-        vCard.workAddress.stateProvince = params['address_stateProvince'];
-        vCard.workAddress.postalCode = params['address_postalCode'];
+
+        if (params['address_city']) {
+            vCard.workAddress.city = params['address_city'];
+        }
+        if (params['address_stateProvince']) {
+            vCard.workAddress.stateProvince = params['address_stateProvince'];
+        }
+        if (params['address_postalCode']) {
+            vCard.workAddress.postalCode = params['address_postalCode'];
+        }
+
         vCard.workAddress.countryRegion = params['address_countryRegion'];
         console.log("generateVCard: Success!")
         return new Promise.resolve(vCard.getFormattedString());
@@ -194,24 +205,31 @@ function parseRequestObject(request_object) {
         'company': request_object.company,
         'email': request_object.actions.email.value,
         'phone_number': request_object.actions.phone_number.value,
-        'website': request_object.actions.website.value,
+        'website': setToNullIfEmpty(request_object.actions.website.value),
         'address_street': request_object.actions.address.address_street,
-        'address_city': request_object.actions.address.address_city,
-        'address_stateProvince': request_object.actions.address.address_stateProvince,
-        'address_postalCode': request_object.actions.address.address_postalCode,
+        'address_city': setToNullIfEmpty(request_object.actions.address.address_city),
+        'address_stateProvince': setToNullIfEmpty(request_object.actions.address.address_stateProvince),
+        'address_postalCode': setToNullIfEmpty(request_object.actions.address.address_postalCode),
         'address_countryRegion': request_object.actions.address.address_countryRegion,
         'address': generateAddressString(request_object.actions.address),
         'profile_photo_filetype': fileType(processImageBinary(request_object.profile_photo)),
         'profile_photo': processImageBinary(request_object.profile_photo),
         'company_logo_filetype': fileType(processImageBinary(request_object.company_logo)),
         'company_logo': processImageBinary(request_object.company_logo),
-        'github': request_object.github,
-        'linkedin': request_object.linkedin,
-        'facebook': request_object.facebook,
-        'medium': request_object.medium,
-        'instagram': request_object.instagram,
-        'additional_info': additionalInfoExists(request_object.github, request_object.linkedin, request_object.facebook, request_object.medium, request_object.instagram)
+        'github': setToNullIfEmpty(request_object.github),
+        'linkedin': setToNullIfEmpty(request_object.linkedin),
+        'facebook': setToNullIfEmpty(request_object.facebook),
+        'medium': setToNullIfEmpty(request_object.medium),
+        'instagram': setToNullIfEmpty(request_object.instagram),
+        'additional_info': additionalInfoExists(setToNullIfEmpty(request_object.github), setToNullIfEmpty(request_object.linkedin), setToNullIfEmpty(request_object.facebook), setToNullIfEmpty(request_object.medium), setToNullIfEmpty(request_object.instagram))
     };
+}
+
+function setToNullIfEmpty(object){
+    if (object === "") {
+        return null;
+    }
+    return object;
 }
 
 function additionalInfoExists(github, linkedin, facebook, medium, instagram) {
@@ -228,7 +246,7 @@ function respondError(callback, cardId, errorMessage) {
         },
         body: JSON.stringify({
             error: errorMessage,
-            path: bucketURL + 'users/' + cardId + '/index.html',
+            path: 'https://firstnamebasis.app/users/' + cardId + '/index.html',
         })
     });
 };
@@ -241,7 +259,7 @@ function respondSuccess(callback, cardId) {
             "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS 
         },
         body: JSON.stringify({
-            path: bucketURL + 'users/' + cardId + '/index.html',
+            path: 'https://firstnamebasis.app/users/' + cardId + '/index.html',
         })
     })
 };

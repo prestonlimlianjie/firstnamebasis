@@ -20,7 +20,17 @@ body {
   margin: 0 auto;
 }
 
-
+i.app-icon {
+	text-align: center;
+	vertical-align: middle;
+	background: url("/assets/icon-app.png") no-repeat;
+	background-size: 95%;
+    content: "";
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-left: 5px;
+}
 
 .intro-container {
 	background: #00122a;

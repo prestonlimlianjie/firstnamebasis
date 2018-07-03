@@ -6,8 +6,13 @@ function readProfileURL(input) {
     reader.onload = function (e) {
       $('#profile-photo-display')
         .attr('src', e.target.result)
-        .width(150)
-        .height(200)
+        .css({
+          'padding-top': '20px',
+          'max-width': '150px',
+          'max-height': '200px',
+          'width': 'auto',
+          'height': 'auto'
+        })
         .show();
     };
     reader.readAsDataURL(input.files[0]);
@@ -21,8 +26,13 @@ function readLogoURL(input) {
     reader.onload = function (e) {
       $('#logo-photo-display')
         .attr('src', e.target.result)
-        .width(150)
-        .height(200)
+        .css({
+          'padding-top': '20px',
+          'max-width': '150px',
+          'max-height': '200px',
+          'width': 'auto',
+          'height': 'auto'
+        })
         .show();
     };
     reader.readAsDataURL(input.files[0]);
@@ -53,22 +63,19 @@ function sendPostRequest(body) {
 }
 
 $(document).ready(function() {
-
-
-
   $("form#signupForm").submit(function(e){
     e.preventDefault();
     $("#loadingModal").modal('show');
 
     var getFormData = Promise.resolve($("#signupForm").serializeJSON())
-    var getProfileImageBlob = getBase64($("input#profile_photo.form-control-file")[0].files[0])
-    var getLogoImageBlob = getBase64($("input#company_logo.form-control-file")[0].files[0])
+    var getProfileImageBlob = ($("input#profile_photo.form-control-file")[0].files[0] == null) ? '' : getBase64($("input#profile_photo.form-control-file")[0].files[0])
+    var getLogoImageBlob =  ($("input#company_logo.form-control-file")[0].files[0] == null) ? '' : getBase64($("input#company_logo.form-control-file")[0].files[0])
     
     var formPostObject = Promise.all([getFormData, getProfileImageBlob,getLogoImageBlob]).then((values) => {
-      console.log(values[0])
       var postObject = values[0]
       postObject.profile_photo = values[1]
       postObject.company_logo = values[2]
+      console.log(postObject)
       return Promise.resolve(postObject)
     })
 

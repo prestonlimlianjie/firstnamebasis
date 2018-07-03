@@ -37,12 +37,17 @@ exports.handle = async (event, context, callback) => {
                         generateVCard(params),
                         generateQRCode(cardId)])
 
-        let results = await Promise.all([
+        let results = params['company_logo'] ? await Promise.all([
             uploadToS3( s3_file_path, 'index.html', 'html', files[0]), // files[0]: HTML
             uploadToS3( s3_file_path, 'user.vcf', 'vcf', files[1]), // files[1]: VCard
             uploadToS3( s3_file_path, 'qr.png', 'png', files[2]), // files[2]: QR Code
             uploadToS3( s3_file_path, 'profile_photo.' + params['profile_photo_filetype'].ext , params['profile_photo_filetype'].mime, params['profile_photo']), // profile_photo
             uploadToS3( s3_file_path, 'company_logo.' + params['company_logo_filetype'].ext, params['company_logo_filetype'].mime, params['company_logo']), // company_logo
+        ]) : await Promise.all([
+            uploadToS3( s3_file_path, 'index.html', 'html', files[0]), // files[0]: HTML
+            uploadToS3( s3_file_path, 'user.vcf', 'vcf', files[1]), // files[1]: VCard
+            uploadToS3( s3_file_path, 'qr.png', 'png', files[2]), // files[2]: QR Code
+            uploadToS3( s3_file_path, 'profile_photo.' + params['profile_photo_filetype'].ext , params['profile_photo_filetype'].mime, params['profile_photo']), // profile_photo
         ]);
 
         let recordId = await saveUserToDb(cardId, params);
@@ -58,6 +63,9 @@ exports.handle = async (event, context, callback) => {
 // Upload helper function
 async function uploadToS3(s3_file_path, s3_file_name, file_type, file_body) {
     console.log("Start uploading file to s3: ", s3_file_path, "; ", s3_file_name, "; ", file_type)
+    if (!file_body) {
+        return Promise.resolve(1);
+    }
     try {
         var params = {
             Bucket: bucket, 
@@ -98,26 +106,16 @@ async function generateVCard(params) {
         // vCard.logo.embedFromString(params['company_logo'].toString('base64'), 'img/png');
         vCard.workPhone = params['phone_number'];
         vCard.title = params['role'];
-        if (params['website']) {
-            vCard.workUrl = params['website'];
-        }
-
+        vCard.workUrl = params['website'] ? params['website'] : null;
         vCard.workEmail = params['email'];
 
-        vCard.workAddress.label = 'Work Address';
-        vCard.workAddress.street = params['address_street']
+        vCard.workAddress.label = params['address'] ? 'Work Address' : null;
+        vCard.workAddress.street = params['address_street'] ? params['address_street'] : null;
+        vCard.workAddress.city = params['address_city'] ? params['address_city'] : null;
+        vCard.workAddress.stateProvince = params['address_stateProvince'] ? params['address_stateProvince'] : null;
+        vCard.workAddress.postalCode = params['address_postalCode'] ? params['address_postalCode'] : null;
+        vCard.workAddress.countryRegion = params['address_countryRegion'] ? params['address_countryRegion'] : null;
 
-        if (params['address_city']) {
-            vCard.workAddress.city = params['address_city'];
-        }
-        if (params['address_stateProvince']) {
-            vCard.workAddress.stateProvince = params['address_stateProvince'];
-        }
-        if (params['address_postalCode']) {
-            vCard.workAddress.postalCode = params['address_postalCode'];
-        }
-
-        vCard.workAddress.countryRegion = params['address_countryRegion'];
         console.log("generateVCard: Success!")
         return new Promise.resolve(vCard.getFormattedString());
     } catch (err) {
@@ -179,11 +177,17 @@ async function saveUserToDb(cardId, params) {
 };
 
 function processImageBinary(image_binary) {
-    return new Buffer(image_binary.replace(/^data:image\/\w+;base64,/, ""),'base64')
+    if (image_binary) {
+        return new Buffer(image_binary.replace(/^data:image\/\w+;base64,/, ""),'base64');
+    }
+    return null;
 }
 
 function generateAddressString(addressObject) {
-    var addressString = addressObject.address_street
+    var addressString = ""
+    if (addressObject.address_street) {
+        addressString += addressObject.address_street
+    }
     if (addressObject.address_city) {
         addressString += ", " + addressObject.address_city
     }
@@ -193,7 +197,10 @@ function generateAddressString(addressObject) {
     if (addressObject.address_postalCode) {
         addressString += ", " + addressObject.address_postalCode
     }
-    return (addressString + ", " + addressObject.address_countryRegion)
+    if (addressObject.address_countryRegion) {
+        addressString += ", " addressObject.address_countryRegion
+    }
+    return addressString === "" ? null : addressString
 }
 
 function parseRequestObject(request_object) {

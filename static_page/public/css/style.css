@@ -30,12 +30,12 @@ i.app-icon {
     margin-left: 5px;
 }
 
-.intro-container h1.landing-title {
+h1.landing-title {
 	font-family: 'Muli', sans-serif;
 	font-size: 40px;
 	letter-spacing: 0.25px;
-	margin-bottom: 0;
-	padding-bottom: 0;
+	margin-bottom: 0 !important;
+	padding-bottom: 0 !important;
 }
 
 .lead {

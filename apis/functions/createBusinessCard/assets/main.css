@@ -72,7 +72,7 @@ img.company-logo {
 
 .row {
 	display: flex;
-	justify-content: center;
+	justify-content: flex-start;
 	align-items: center;
 	flex-wrap: nowrap;
 	flex-direction: row;

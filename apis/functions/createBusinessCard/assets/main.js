@@ -1,5 +1,7 @@
 document.getElementById("share-button").addEventListener("click", toggleQRCode);
-document.getElementById("modal-button").addEventListener("click", hideModal);
+if (document.getElementById("modal-button")){
+	document.getElementById("modal-button").addEventListener("click", hideModal);
+}
 
 function toggleQRCode() {
 	if (document.getElementById("profile-pic").style.display === "none") {
@@ -12,10 +14,12 @@ function toggleQRCode() {
 }
 
 window.onload = function() {
-	if (navigator.platform === "iPhone" || navigator.platform === "iPad") {
-		if (window.navigator.standalone === false) {
-			document.getElementById("opaque-background").style.display = "block";
-			document.getElementById("modal").style.display = "block";
+	if (document.referrer === "https://firstnamebasis.app/"){
+		if (window.navigator.userAgent.toLowerCase()=== "iphone" || window.navigator.userAgent.toLowerCase() === "ipad") {
+			if (window.navigator.standalone === false) {
+				document.getElementById("opaque-background").style.display = "block";
+				document.getElementById("modal").style.display = "block";
+			}
 		}
 	}
 };

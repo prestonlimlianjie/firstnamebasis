@@ -10,12 +10,15 @@ const uuid = require('uuid/v4');
 const AWS = require('aws-sdk');
 const ddb = Promise.promisifyAll(new AWS.DynamoDB.DocumentClient());
 const s3 = Promise.promisifyAll(new AWS.S3());
+const googleRecaptcha = require('google-recaptcha');
 
 // Constants
 // =========
 const bucket = 'firstnamebasis.app';
 const templateFile = './assets/index.html';
 const bucketURL = 'http://firstnamebasis.app/';
+const baseURL = 'https://firstnamebasis.app/';
+const config = require('./assets/config');
 
 // Lambda function proper
 // ======================
@@ -25,40 +28,73 @@ exports.handle = async (event, context, callback) => {
         console.log('start createBusinesCard...')
         console.log('event: ', event)
 
-        // Generate UUIDs for eaach card and image group to prevent filename conflicts
-        const cardId = uuid();
-        var s3_file_path = 'users/' + cardId
-        var params = parseRequestObject(JSON.parse(event.body))
+        const captcha = new googleRecaptcha({
+            secret: config.secret
+        });
+        let captchaResponse = JSON.parse(event.body)['g-recaptcha-response'];
+        console.log('captcha response', captchaResponse);
 
-        console.log(params)
+        let isHuman = await recaptchaVerifier(captcha, captchaResponse);
 
-        let files = await Promise.all([
-                        generateHTML(params),
-                        generateVCard(params),
-                        generateQRCode(cardId)])
+        if (isHuman){
+            console.log('Recaptcha was solved by human')
 
-        let results = params['company_logo'] ? await Promise.all([
-            uploadToS3( s3_file_path, 'index.html', 'html', files[0]), // files[0]: HTML
-            uploadToS3( s3_file_path, 'user.vcf', 'vcf', files[1]), // files[1]: VCard
-            uploadToS3( s3_file_path, 'qr.png', 'png', files[2]), // files[2]: QR Code
-            uploadToS3( s3_file_path, 'profile_photo.' + params['profile_photo_filetype'].ext , params['profile_photo_filetype'].mime, params['profile_photo']), // profile_photo
-            uploadToS3( s3_file_path, 'company_logo.' + params['company_logo_filetype'].ext, params['company_logo_filetype'].mime, params['company_logo']), // company_logo
-        ]) : await Promise.all([
-            uploadToS3( s3_file_path, 'index.html', 'html', files[0]), // files[0]: HTML
-            uploadToS3( s3_file_path, 'user.vcf', 'vcf', files[1]), // files[1]: VCard
-            uploadToS3( s3_file_path, 'qr.png', 'png', files[2]), // files[2]: QR Code
-            uploadToS3( s3_file_path, 'profile_photo.' + params['profile_photo_filetype'].ext , params['profile_photo_filetype'].mime, params['profile_photo']), // profile_photo
-        ]);
+            // Generate UUIDs for eaach card and image group to prevent filename conflicts
+            const cardId = uuid();
+            var s3_file_path = 'users/' + cardId
+            var params = parseRequestObject(JSON.parse(event.body))
+            console.log(params)
+            
+            let files = await Promise.all([
+                            generateHTML(params),
+                            generateVCard(params),
+                            generateQRCode(cardId)])
 
-        let recordId = await saveUserToDb(cardId, params);
+            let results = params['company_logo'] ? await Promise.all([
+                uploadToS3( s3_file_path, 'index.html', 'html', files[0]), // files[0]: HTML
+                uploadToS3( s3_file_path, 'user.vcf', 'vcf', files[1]), // files[1]: VCard
+                uploadToS3( s3_file_path, 'qr.png', 'png', files[2]), // files[2]: QR Code
+                uploadToS3( s3_file_path, 'profile_photo.' + params['profile_photo_filetype'].ext , params['profile_photo_filetype'].mime, params['profile_photo']), // profile_photo
+                uploadToS3( s3_file_path, 'company_logo.' + params['company_logo_filetype'].ext, params['company_logo_filetype'].mime, params['company_logo']), // company_logo
+            ]) : await Promise.all([
+                uploadToS3( s3_file_path, 'index.html', 'html', files[0]), // files[0]: HTML
+                uploadToS3( s3_file_path, 'user.vcf', 'vcf', files[1]), // files[1]: VCard
+                uploadToS3( s3_file_path, 'qr.png', 'png', files[2]), // files[2]: QR Code
+                uploadToS3( s3_file_path, 'profile_photo.' + params['profile_photo_filetype'].ext , params['profile_photo_filetype'].mime, params['profile_photo']), // profile_photo
+            ]);
 
-        respondSuccess(callback, cardId)
+            let recordId = await saveUserToDb(cardId, params);
+
+            respondSuccess(callback, cardId)
+
+        }
 
     } catch (err) {
         console.log("failed to createBusinessCard: ", err)
         respondError(callback, err)
     }
 };
+
+async function recaptchaVerifier(captcha, captchaResponse){
+    try {
+        return new Promise(resolve => {
+            captcha.verify({response: captchaResponse}, (error) => {
+                if (error) {
+                    console.log('Captcha failed')
+                    return reject(error);
+                } else {
+                    console.log('Captcha verified')
+                    return resolve(true);
+                }
+            })
+        })
+    }
+    catch(err) {
+        console.log("Failed to verify captcha: ", err)
+        return new Promise.reject(err)
+    }
+
+}
 
 // Upload helper function
 async function uploadToS3(s3_file_path, s3_file_name, file_type, file_body) {
@@ -130,8 +166,8 @@ async function generateHTML(params) {
     try {
         var template_file = await fs.readFileAsync(templateFile);
         var template = template_file.toString('utf8');
-        var templatin_engine = handlebars.compile(template);
-        var rendered_template = templatin_engine(params);
+        var templating_engine = handlebars.compile(template);
+        var rendered_template = templating_engine(params);
         console.log("generateHTML: Success!")
         return new Promise.resolve(rendered_template);
     } catch (err) {
@@ -144,7 +180,7 @@ async function generateHTML(params) {
 async function generateQRCode(cardId) {
     console.log("Start generating QR Code...")
     try {
-        var cardURL = bucketURL + 'users/' + cardId + '/index.html'
+        var cardURL = baseURL + 'users/' + cardId + '/index.html'
         var qr_code = qr.image(cardURL, { ec_level: 'H' });
         console.log("generateQRCode: Success!")
         return Promise.resolve(qr_code)
@@ -177,7 +213,7 @@ async function saveUserToDb(cardId, params) {
 };
 
 function processImageBinary(image_binary) {
-    if (image_binary) {
+    if (image_binary !== "") {
         return new Buffer(image_binary.replace(/^data:image\/\w+;base64,/, ""),'base64');
     }
     return null;
@@ -198,7 +234,7 @@ function generateAddressString(addressObject) {
         addressString += ", " + addressObject.address_postalCode
     }
     if (addressObject.address_countryRegion) {
-        addressString += ", " addressObject.address_countryRegion
+        addressString += ", " + addressObject.address_countryRegion
     }
     return addressString === "" ? null : addressString
 }
@@ -213,11 +249,11 @@ function parseRequestObject(request_object) {
         'email': request_object.actions.email.value,
         'phone_number': request_object.actions.phone_number.value,
         'website': setToNullIfEmpty(request_object.actions.website.value),
-        'address_street': request_object.actions.address.address_street,
+        'address_street': setToNullIfEmpty(request_object.actions.address.address_street),
         'address_city': setToNullIfEmpty(request_object.actions.address.address_city),
         'address_stateProvince': setToNullIfEmpty(request_object.actions.address.address_stateProvince),
         'address_postalCode': setToNullIfEmpty(request_object.actions.address.address_postalCode),
-        'address_countryRegion': request_object.actions.address.address_countryRegion,
+        'address_countryRegion': setToNullIfEmpty(request_object.actions.address.address_countryRegion),
         'address': generateAddressString(request_object.actions.address),
         'profile_photo_filetype': fileType(processImageBinary(request_object.profile_photo)),
         'profile_photo': processImageBinary(request_object.profile_photo),
@@ -253,7 +289,7 @@ function respondError(callback, cardId, errorMessage) {
         },
         body: JSON.stringify({
             error: errorMessage,
-            path: 'https://firstnamebasis.app/users/' + cardId + '/index.html',
+            path: baseURL + 'users/' + cardId + '/index.html',
         })
     });
 };
@@ -266,7 +302,7 @@ function respondSuccess(callback, cardId) {
             "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS 
         },
         body: JSON.stringify({
-            path: 'https://firstnamebasis.app/users/' + cardId,
+            path: baseURL + 'users/' + cardId,
         })
     })
 };

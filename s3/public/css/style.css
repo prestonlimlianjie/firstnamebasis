@@ -85,8 +85,7 @@ h1.landing-title {
 }
 
 .form-container {
-	padding-top: 30px;
-	padding-bottom: 30px;
+	padding: 4rem 0;
 }
 
 .form-control {
@@ -105,4 +104,19 @@ h1, h2, h3, h4 {
 input, textarea {
 	border-radius: 0px!important;
 	border: 0px!important;
+}
+
+.steps-container {
+	padding: 4rem 0;
+}
+
+.questions-container {
+	padding: 4rem 0;
+	/*background: -webkit-linear-gradient(#2F80ED, #2D9CDB);*/
+	background: #f6f6f6;
+}
+
+.how-to-use {
+	margin: 1rem;
+	margin-bottom: 2rem;
 }

@@ -1,0 +1,346 @@
+html,
+body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	justify-content: center;
+}
+
+section {
+	display: block;
+	padding-left: 1rem;
+	padding-right: 1rem;
+	height: auto;
+}
+
+p {
+	margin: 0.25rem !important;
+}
+
+a {
+	text-decoration: none;
+}
+
+img {
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-height: 100%;
+    max-width: 100%;
+    height: auto;
+    width: auto;
+    object-fit: contain;
+}
+
+img.profile-pic {
+	object-fit: cover;
+	border-radius: 50%;
+	height: 150px;
+	width: 150px;
+	margin: 0;
+	margin-left: 4px;
+}
+
+#qr-code {
+	display: none;
+	height: 125px;
+	width: 125px;
+	margin: 0;
+	margin-left: 4px;
+}
+
+img.company-logo {
+	margin-right: 0;
+	height: 75px;
+	width: auto;
+}
+
+.icon-div {
+	margin-left: 8px;
+}
+
+.additional-info img {
+	margin-left: 4px;
+}
+
+.container {
+	margin: 0 auto;
+	position: relative;
+	height: 100%;
+	object-fit: contain;
+}
+
+.row {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex-wrap: nowrap;
+	flex-direction: row;
+	position: relative;
+	height: 100%;
+	max-width: 500px;
+	margin-left: auto;
+	margin-right: auto;
+	object-fit: contain;
+	overflow: hidden;
+}
+
+.col {
+	display: block;
+	flex-basis: 0;
+	flex-grow: 1;
+	flex-shrink: 1;
+	margin: 0;
+	padding: 0.25rem;
+	max-width: 100%;
+	max-height: 100%;
+	overflow: auto;
+}
+
+.col.is-1 {
+	flex: none;
+	width: 10%;
+}
+
+.col.is-2 {
+	flex: none;
+	width: 20%;
+}
+
+.col.is-3 {
+	flex: none;
+	width: 30%;
+}
+
+.col.is-4 {
+	flex: none;
+	width: 40%;
+}
+
+.col.is-5 {
+	flex: none;
+	width: 50%;
+}
+
+.col.is-6 {
+	flex: none;
+	width: 60%;
+}
+
+.col.is-7 {
+	flex: none;
+	width: 70%;
+}
+
+.col.is-8 {
+	flex: none;
+	width: 80%;
+}
+
+.col.is-9 {
+	flex: none;
+	width: 90%;
+}
+
+.col.is-10 {
+	flex: none;
+	width: 100%;
+}
+
+.name-title-company {
+	height: 100%;
+}
+
+.banner {
+	padding-top: 35px;
+	padding-bottom: 0px;
+	height: 150px;
+}
+
+.primary-info {
+	height: 100px;
+}
+
+.secondary-info {
+	height: 60px;
+}
+
+.additional-info {
+	height: 70px;
+	border-top: 1px solid #EDEDED; 
+	border-bottom: 1px solid #EDEDED;
+}
+
+.bg-color-navbar {
+	background-color: #00122A;
+}
+
+.bg-color-hero {
+	background: linear-gradient(#2F80ED, #2D9CDB, #2D9CDB 59.4%, #FFFFFF 59.4%);
+}
+
+.bg-color-white {
+	background-color: white;
+}
+
+.row.detail {
+	margin-top: 0.5rem;
+}
+
+.text-name {
+    font-family: 'Lato', sans-serif;
+    font-weight: 500;
+    color: #333333;
+    font-size: 22px;
+}
+
+.text-title-company {
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    color: #333333;
+    font-size: 14px;
+}
+
+.text-detail {
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    color: #333333;
+    font-size: 13px;
+    position: relative;
+	transform: translateY(-5%); 
+	letter-spacing: 0.15px;
+}
+
+.bottom {
+	height: 100px;
+}
+
+.button {
+	display: block;
+	width: 160px;
+	background: linear-gradient(#2F80ED, #2D9CDB);
+	height: 53px;
+	padding: 0px 24px;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 48px;
+	font-family: 'Lato', sans-serif;
+	color: white;
+	letter-spacing: 0.5px;
+	font-size: 16px;
+	font-weight: 300;
+	border: none;
+	/* border-radius */
+	 -webkit-border-radius: 30px;
+	 -moz-border-radius: 30px;
+	 border-radius: 30px;
+	/* box-shadow */
+	 -webkit-box-shadow: rgba(0,0,0,0.8) 1px 1px 3px;
+	 -moz-box-shadow: rgba(0,0,0,0.8) 1px 1px 3px;
+	 box-shadow: rgba(0,0,0,0.8) 1px 1px 3px;
+}
+
+.button:hover {
+	cursor: pointer;
+}
+
+.horizontal-center-child {
+	display: flex;
+	justify-content: center;
+}
+
+.navbar span{
+	text-align: center;
+	font-size: 14px;
+	font-family: 'Muli';
+	font-weight: 300px;
+	line-height: 30px;
+	color: white;
+	display: block;
+}
+
+i.app-icon {
+	text-align: center;
+	vertical-align: middle;
+	background: url("/assets/icon-app.png") no-repeat;
+	background-size: 95%;
+    content: "";
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-left: 5px;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.share-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.share-button:hover {
+	cursor: pointer;
+}
+
+.modal {
+	top: 50%;
+    left: 50%;
+    z-index: 3;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 500px;
+    background: -webkit-linear-gradient(#2F80ED, #2D9CDB, #2D9CBD 50%, #FFFFFF 50%);
+    background: linear-gradient(#2F80ED, #2D9CDB, #2D9CBD 50%, #FFFFFF 50%);
+    text-align: center;
+    border-radius: 0.75rem;
+    font-family: 'Lato', sans-serif;
+    display: none;
+}
+
+.modal-button {
+	font-size: 18px;
+}
+
+.modal-title {
+	font-size: 22px;
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+    color: #00122A;
+}
+
+.modal-subtitle {
+	font-size: 18px;
+	margin-left: 1rem !important;
+	margin-right: 1rem !important;
+	padding-bottom: 2rem;
+}
+.modal-icon {
+	width: 100px;
+	height: 250px;
+}
+
+.share-icon {
+	width: 18px;
+	height: 18px;
+	display: inline-block;
+}
+
+.opaque-background {
+	top: 0;
+	left: 0;
+	z-index: 2;
+	position: fixed;
+	background-color: #00122A;
+	opacity: 0.9;
+	width: 100%;
+	height: 100%;
+	display: none;
+}

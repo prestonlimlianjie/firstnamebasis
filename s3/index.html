@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>First Name Basis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link rel="icon" type="image/png" sizes="64x64" href="/assets/app-favicon.png">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300" rel="stylesheet">
+    <link href="public/css/style.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="public/js/main.js"></script>
+    <script src="public/js/jquery.serializejson.min.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-120242830-1"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-120242830-1');
+    </script>
+    <link href="https://fonts.googleapis.com/css?family=Muli:200,300,400,500,600,700" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Lato:200,300,400,700' rel='stylesheet' type='text/css'>
+  </head>
+  <body>
+    <nav class="navbar navbar-toggleable-md text-center">
+      <a class="navbar-brand text-white" href="#">
+        <span>firstnamebasis<i class="app-icon"></i></span>
+      </a>
+    </nav>
+
+    <div class="container-fluid intro-container">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 left-half"> 
+            <h1 class="landing-title"><b>Never run out of business cards again.</b></h1>
+            <p class="lead text-white"><br>Create your digital business card for free today.</p>
+            <div style="padding-bottom: 20px">
+              <a class="btn btn-light btn-lg bg-blue-gradient" href="https://firstnamebasis.app/users/9ff8954c-6fd7-4fbc-b5cd-4d031de038a5/" role="button">
+                <div class="content text-white">Sample</div>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6"> 
+            <img class="landing-image" src="/assets/landing-image.png" alt="Demo images of the mobile and desktop version of the web app" width="100%" height="auto">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid steps-container">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <h3><b>How It Works</b></h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col text-center">
+            <img class="how-to-use" src="/assets/create-card.svg" width="50px" height="50px"><br>
+            Sign Up
+          </div>
+          <div class="col text-center">
+            <img class="how-to-use" src="/assets/home-screen.svg" width="50px" height="50px"><br>
+            Save to Mobile Home Screen
+          </div>
+          <div class="col text-center">
+            <img class="how-to-use" src="/assets/share-qr.svg" width="50px" height="50px"><br>
+            Share QR Code
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid questions-container">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <h3><b>Any Questions or Feedback?</b></h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col text-center">
+            Please reach out to us at <u>info@firstnamebasis.app</u> for any questions or feedback.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row form-container"> 
+        <div class="col">
+          <form id="signupForm" autocomplete="off">  
+            <h3><b>Sign Up</b></h3>
+            <section id="personalInfo">
+              <div class="card">
+                <div class="card-body">
+                  <h4>Personal information</h4>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="name">First name</label>
+                      <input class="form-control" id="first_name" name="first_name" type="text" placeholder="John" required="true">
+                      <label for="name">Last name</label>
+                      <input class="form-control" id="last_name" name="last_name" type="text" placeholder="Smith" required="true">
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="profile_photo">Profile photo</label>
+                      <input class="form-control-file" id="profile_photo" name="profile_photo" type="file" accept="image/*" onchange="readProfileURL(this)" required="true">
+                      <img class="hidden" id="profile-photo-display" src="#" alt="your image" onerror="this.style.display='none'">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <llabel for="company">Company</label>
+                       <input class="form-control" id="company" name="company" type="text" placeholder="Company ABC" required="true">
+                      <label for="role">Role</label>
+                      <input class="form-control" id="role" name="role" type="text" placeholder="Role XYZ" required="true">
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="company_logo">Company logo (Optional)</label>
+                      <input class="form-control-file" id="company_logo" name="company_logo" type="file" accept="image/*" onchange="readLogoURL(this)">
+                      <img class="hidden" id="logo-photo-display" src="#" onerror="this.style.display='none'">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section> 
+            <br>
+            <section id="callToAction">
+              <h3>Calls-to-action</h3>
+              <div id="callToActionContainer">
+                <div class="card">
+                  <div class="card-body">
+                    <h4>Contact Information</h4>
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label for="email">Email address</label>
+                        <input class="form-control" id="email" name="actions[email][value]" type="email" placeholder="name@example.com" required="true">
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="phone_number">Contact number</label>
+                        <input class="form-control" id="phone_number" name="actions[phone_number][value]" type="phone_number" placeholder="+01 9123 4567" required="true">
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label for="website">Website (Optional)</label>
+                        <input class="form-control" id="website" name="actions[website][value]" type="website" placeholder="https://google.com">
+                      </div>
+                    </div>
+                    <hr/>     
+                    <h4>References</h4>
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label for="linkedin">Linkedin (Optional)</label>
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">https://www.linkedin.com/in/</span>
+                          <input class="form-control" id="linkedin" name="linkedin" type="text" placeholder="john-smith">                       
+                        </div>
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="facebook">Facebook (Optional)</label>
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">https://www.facebook.com/</span>
+                          <input class="form-control" id="facebook" name="facebook" type="text" placeholder="john-smith">                       
+                        </div>
+                      </div>                      
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label for="instagram">Instagram (Optional)</label>
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">hhttps://www.instagram.com/</span>
+                          <input class="form-control" id="instagram" name="instagram" type="text" placeholder="john-smith">                       
+                        </div>
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="github">Github (Optional)</label>
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">https://github.com/</span>
+                          <input class="form-control" id="github" name="github" type="text" placeholder="john-smith">                       
+                        </div>
+                      </div>                      
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label for="medium">Medium (Optional)</label>
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">https://medium.com/@</span>
+                          <input class="form-control" id="medium" name="medium" type="text" placeholder="john-smith">                       
+                        </div>
+                      </div>                   
+                    </div>           
+                    <hr/>     
+                    <h4>Office address</h4>
+                    <div class="form-row">
+                      <div class="form-group col-md-6">  
+                        <label for="address_street">Street</label>
+                        <input class="form-control" id="address_street" name="actions[address][address_street]" type="text" placeholder="Avenue Q">
+                      </div>
+                      <div class="form-group col-md-6"> 
+                        <label for="address_city">City (Optional)</label>
+                        <input class="form-control" id="address_city" name="actions[address][address_city]" type="text" placeholder="Kansas City">
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-md-6">  
+                        <label for="address_stateProvince">State/Province (Optional)</label>
+                        <input class="form-control" id="address_stateProvince" name="actions[address][address_stateProvince]" type="text" placeholder="Utah">
+                      </div>
+                      <div class="form-group col-md-6"> 
+                        <label for="address_postalCode">Postal Code (Optional)</label>
+                        <input class="form-control" id="address_postalCode" name="actions[address][address_postalCode]" type="text" placeholder="5XCYM3">
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-md-6"> 
+                        <label for="address_countryRegion">Country/Region</label>
+                        <input class="form-control" id="address_countryRegion" name="actions[address][address_countryRegion]" type="text" placeholder="United States">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <div class="g-recaptcha" data-sitekey="6Le_S2IUAAAAAEEhadu_y-FGzCxprYt3gt-jKbvM"></div>
+            <br>
+            <button class="btn btn-secondary text-primary" id="form-submit" type="submit">Submit</button>
+          </form> 
+        </div>
+      </div>
+    </div>
+  <!-- ----------Loading Modal---------- -->
+  <div class="modal fade" id="loadingModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <img src="public/img/loading.gif"/ height="30px" width="30px">
+          <p class="text-center">Creating your business card...</p>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- --------------------------------------- -->
+  </body>

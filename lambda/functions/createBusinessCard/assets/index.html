@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>First Name Basis</title>
+	<link rel="stylesheet" href="/assets/main.css">
+	<link href='https://fonts.googleapis.com/css?family=Lato:200,300,400,700' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/css?family=Muli:200,300,400" rel="stylesheet">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+	<link rel="icon" type="image/png" sizes="64x64" href="/assets/app-favicon.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/assets/homescreen-icon.png">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link href="/assets/splashscreens/iphone5_splash.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+	<link href="/assets/splashscreens/iphone6_splash.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+	<link href="/assets/splashscreens/iphoneplus_splash.png" media="(device-width: 621px) and (device-height: 1104px) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image" />
+	<link href="/assets/splashscreens/iphonex_splash.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" rel="apple-touch-startup-image" />
+	<link href="/assets/splashscreens/ipad_splash.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+	<link href="/assets/splashscreens/ipadpro1_splash.png" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+	<link href="/assets/splashscreens/ipadpro2_splash.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image" />
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-120242830-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+  		gtag('config', 'UA-120242830-1');
+	</script>
+</head>
+
+<body>
+	<div class="opaque-background" id="opaque-background"></div>
+	<div class="modal" id="modal">
+		<img class="modal-icon" src="/assets/modal-icon.svg">
+		<div>
+			<p class="modal-title"> Save to Home Screen </p>
+			<p class="modal-subtitle"> Tap <img class="share-icon" src="/assets/share-icon.png"> then 'Add to Home Screen' </p>
+			<div class="container">
+				<div class="row">
+					<div class="col horizontal-center-child">
+						<button class="modal-button button" id="modal-button">
+							Done
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<section class="bg-color-navbar navbar">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<a href="https://firstnamebasis.app/#">
+						<span class="app-icon">firstnamebasis<i class="app-icon"></i></span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="bg-color-hero banner">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<img id="profile-pic" class="profile-pic" src="profile_photo.{{profile_photo_filetype.ext}}" alt="Profile Picture">
+					<img id="qr-code" src="qr.png" alt="QR Code">
+				</div>
+				<div class="col">
+					<a id="share-button" class="share-button"><img src="/assets/icon-qr.svg">QR</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="bg-color-white primary-info">
+		<div class="container">
+			<div class="row name-title-company">
+				<div class="col is-6">
+					<p class="text-name">{{full_name}}</p>
+					<p class="text-title-company">{{role}}</p>
+					<p class="text-title-company">{{company}}</p>
+				</div>
+				{{#if company_logo}}
+				<div class="col">
+					<img class="company-logo" src="company_logo.{{company_logo_filetype.ext}}" alt="Company Logo">
+				</div>
+				{{/if}}
+			</div>
+		</div>
+	</section>
+
+	{{#if additional_info}}
+	<section class="bg-color-white additional-info">
+		<div class="container">
+			<div class="row name-title-company">
+				{{#if github}}
+				<div class="col is-2">
+					<a href="https://github.com/{{github}}">
+						<img src="/assets/icon-github.svg">
+					</a>
+				</div>
+				{{/if}}
+				{{#if linkedin}}
+				<div class="col is-2">
+					<a href="https://www.linkedin.com/in/{{linkedin}}">
+						<img src="/assets/icon-linkedin.svg">
+					</a>
+				</div>
+				{{/if}}
+				{{#if facebook}}
+				<div class="col is-2">
+					<a href="https://www.facebook.com/{{facebook}}">
+						<img src="/assets/icon-facebook.svg">
+					</a>
+				</div>
+				{{/if}}
+				{{#if medium}}
+				<div class="col is-2">
+					<a href="https://medium.com/@{{medium}}">
+						<img src="/assets/icon-medium.svg">
+					</a>
+				</div>
+				{{/if}}
+				{{#if instagram}}
+				<div class="col is-2">
+					<a href="https://www.instagram.com/{{instagram}}">
+						<img src="/assets/icon-instagram.svg">
+					</a>
+				</div>
+				{{/if}}
+			</div>
+		</div>
+	</section>
+	{{/if}}
+
+	<section class="bg-color-white secondary-info">
+		<a href="mailto:{{email}}">
+			<div class="container">
+				<div class="row detail">
+					<div class="icon-div">
+						<img src="/assets/icon-email.svg" />
+					</div>
+					<div class="col">
+						<p class="text-detail">{{email}}</p>
+					</div>
+				</div>
+			</div>
+		</a>
+	</section>
+
+	<section class="bg-color-white secondary-info">
+		<a href="tel:{{phone_number}}">
+			<div class="container">
+				<div class="row detail">
+					<div class="icon-div">
+						<img src="/assets/icon-phone.svg" />
+					</div>
+					<div class="col">
+						<p class="text-detail">{{phone_number}}</p>
+					</div>
+				</div>
+			</div>
+		</a>
+	</section>
+
+	{{#if website}}
+	<section class="bg-color-white secondary-info">
+		<a href="{{website}}">
+			<div class="container">
+				<div class="row detail">
+					<div class="icon-div">
+						<img src="/assets/icon-website.svg" />
+					</div>
+					<div class="col">
+						<p class="text-detail">{{website}}</p>
+					</div>
+				</div>
+			</div>
+		</a>
+	</section>
+	{{/if}}
+
+	{{#if address}}
+	<section class="bg-color-white secondary-info">
+		<a href="https://www.google.com/maps/search/?api=1&query={{address}}">
+			<div class="container">
+				<div class="row detail">
+					<div class="icon-div">
+						<img src="/assets/icon-address.svg" />
+					</div>
+					<div class="col">
+						<p class="text-detail">{{address}}</p>
+					</div
+				</div>
+			</div>
+		</a>
+	</section>
+	{{/if}}
+
+	<section class="bg-color-white bottom">
+		<div class="container">
+			<div class="row">
+				<div class="col horizontal-center-child">
+					<a href="user.vcf">
+						<button class="button">
+							Save Contact
+						</button>
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+<script src="/assets/main.js"></script>
+</body>
+
+</html>

@@ -50,7 +50,7 @@ function getBase64(file) {
 
 function sendPostRequest(body) {
   console.log("sending data to api endpoint")
-  var endpoint = 'https://30nl04a0ki.execute-api.ap-southeast-1.amazonaws.com/v1/create'; 
+  var endpoint = '{ENDPOINT}/create';
 
   return $.ajax({
             type: 'POST',
@@ -81,7 +81,7 @@ $(document).ready(function() {
 
     var postToEndpoint = formPostObject.then(function(postObject) {
       // return sendPostRequest(postObject)
-      var endpoint = 'https://0sm4cknhsl.execute-api.ap-southeast-1.amazonaws.com/prod/create'; 
+      var endpoint = '{ENDPOINT}/create';
 
       // POST request to endpoint
       return axios({

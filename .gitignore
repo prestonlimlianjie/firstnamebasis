@@ -3,3 +3,6 @@
 node_modules
 *.DS_Store
 *config.js
+.terraform
+terraform.tfstate*
+build/

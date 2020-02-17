@@ -8,7 +8,15 @@ Create your own digital business card at https://firstnamebasis.app.
 
 ### For developers
 
+#### Prerequisites
+
+- `npm`:
+- AWS CLI
+- AWS account
+- reCAPTCHA site key
+
 To replicate the digital business card service, you need to use the following services:
+
 1. AWS S3
 2. AWS API Gateway and AWS Lambda
 
@@ -23,13 +31,26 @@ The assets for the individual business cards are found in the s3/assets folder.
 
 Upon submission of the form on the main landing page, a POST API is called from the client browser and is sent to the AWS API Gateway. The lambda function is then called via the API Gateway to do the following:
 
-* Create a new folder in the S3 bucket with a user-specific UUID to store all the relevant files
-* Upload the user's profile picture and company logo into the abovementioned folder
-* Render the user's individual business card HTML page
-* Generate the user's VCF
-* Generate the QR code pointing to the user's business card HTML page
-* Upload all the files generated into the user's folder
+- Create a new folder in the S3 bucket with a user-specific UUID to store all the relevant files
+- Upload the user's profile picture and company logo into the abovementioned folder
+- Render the user's individual business card HTML page
+- Generate the user's VCF
+- Generate the QR code pointing to the user's business card HTML page
+- Upload all the files generated into the user's folder
 
 The relevant code and assets for the lambda function are in the lambda/functions/createBusinessCard folder.
 
+#### Alternative: Using Terraform
 
+From the command line, perform the following:
+
+```shell
+make package
+terraform apply -var="site_name=<YOUR_SITE_NAME>" -var="recaptcha_site_key=<YOUR_RECAPTCHA_SITE_KEY>"
+```
+
+If you are running it for the first time, perform the following first
+
+```shell
+terraform init
+```
